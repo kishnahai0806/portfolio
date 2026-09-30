@@ -67,11 +67,11 @@ body::before {
 
 /* Startup sequence */
 .startup-loader {
+  background: var(--color-loader);
   color: var(--color-loader-ink);
   isolation: isolate;
 }
-.startup-panel {
-  background: var(--color-loader);
+.startup-pill {
   backface-visibility: hidden;
   contain: paint;
   transform: translateZ(0);
@@ -86,6 +86,7 @@ body::before {
 .startup-track { animation: loader-track 12s linear infinite; will-change: transform; }
 .startup-track i { padding: 0 0.35em; color: var(--color-amber); font-style: normal; }
 .startup-pill { box-shadow: -7px -6px 0 rgba(255, 107, 44, 0.85), 0 22px 60px rgba(10, 10, 8, 0.24); }
+.startup-pill-expanding { box-shadow: none; }
 @keyframes loader-track { from { transform: translate3d(-5%,0,0); } to { transform: translate3d(-48%,0,0); } }
 
 /* Navigation */

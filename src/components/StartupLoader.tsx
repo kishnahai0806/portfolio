@@ -5,14 +5,9 @@ import { site } from "../content";
 import { useMotionPreferences } from "./motion/MotionPreferences";
 import { premiumEase } from "./motion/motionPresets";
 
-type StartupPhase = "loading" | "ready" | "complete";
+type StartupPhase = "loading" | "welcome" | "expanding" | "complete";
 
 const startupPhrases = [site.title, "Full stack systems"];
-
-const curtainTransition = {
-  duration: 0.95,
-  ease: premiumEase,
-};
 
 export default function StartupLoader({ children }: { children: ReactNode }) {
   const { reduceMotion } = useMotionPreferences();
@@ -52,7 +47,7 @@ export default function StartupLoader({ children }: { children: ReactNode }) {
         frameRef.current = window.requestAnimationFrame(tick);
       } else {
         setProgress(100);
-        setPhase("ready");
+        setPhase("welcome");
       }
     };
 
@@ -63,10 +58,10 @@ export default function StartupLoader({ children }: { children: ReactNode }) {
   }, [reduceMotion]);
 
   useEffect(() => {
-    if (phase !== "ready") return;
-    const timer = window.setTimeout(finish, 480);
+    if (phase !== "welcome") return;
+    const timer = window.setTimeout(() => setPhase("expanding"), 620);
     return () => window.clearTimeout(timer);
-  }, [finish, phase]);
+  }, [phase]);
 
   useEffect(() => {
     if (phase === "complete") return;
@@ -95,34 +90,14 @@ export default function StartupLoader({ children }: { children: ReactNode }) {
             key="startup-loader"
             className="startup-loader fixed inset-0 z-[100] overflow-hidden"
             initial={false}
-            exit="exit"
-            variants={{
-              exit: { transition: { when: "afterChildren" } },
-            }}
             role="dialog"
             aria-modal="true"
             aria-label="Portfolio loading"
           >
             <motion.div
-              className="startup-panel absolute inset-x-0 top-0 h-[50.1%]"
-              variants={{ exit: { y: "-100%", transition: curtainTransition } }}
-              aria-hidden="true"
-            />
-            <motion.div
-              className="startup-panel absolute inset-x-0 bottom-0 h-[50.1%]"
-              variants={{ exit: { y: "100%", transition: curtainTransition } }}
-              aria-hidden="true"
-            />
-
-            <motion.div
               className="absolute inset-0 z-10"
-              variants={{
-                exit: {
-                  opacity: 0,
-                  scale: 0.992,
-                  transition: { duration: 0.18, ease: premiumEase },
-                },
-              }}
+              animate={{ opacity: phase === "expanding" ? 0 : 1 }}
+              transition={{ duration: 0.2, ease: premiumEase }}
             >
               <div className="startup-grain" aria-hidden="true" />
 
@@ -145,32 +120,73 @@ export default function StartupLoader({ children }: { children: ReactNode }) {
                 </div>
               </div>
 
-              <div className="absolute inset-0 flex items-center justify-center px-5">
-                <motion.div
-                  className="startup-pill relative flex min-w-[16rem] items-center justify-between gap-8 overflow-hidden rounded-full bg-bg px-7 py-5 text-white sm:min-w-[20rem]"
-                  animate={phase === "ready" ? { scale: [1, 1.035, 1] } : { scale: 1 }}
-                  transition={{ duration: 0.35, ease: premiumEase }}
-                >
-                  <span className="font-mono text-xs font-semibold uppercase tracking-[0.16em]">
-                    {phase === "ready" ? "Welcome" : "Loading"}
-                  </span>
-                  <span className="flex items-center gap-2 font-mono text-sm tabular-nums text-white/70">
-                    {String(progress).padStart(3, "0")}<span className="text-white/35">%</span>
-                    <span className="h-4 w-2 bg-amber" aria-hidden="true" />
-                  </span>
-                  <motion.span
-                    className="absolute inset-x-0 bottom-0 h-1 origin-left bg-amber"
-                    style={{ scaleX: progress / 100 }}
-                  />
-                </motion.div>
-              </div>
-
               <div className="absolute inset-x-5 bottom-5 flex items-end justify-between gap-6 font-mono text-[9px] uppercase tracking-[0.18em] text-loader-ink/55 sm:inset-x-10 sm:bottom-8 sm:text-[10px]">
                 <span>{site.title}</span>
                 <span className="hidden text-right sm:block">React / Spring / PostgreSQL / Docker</span>
-                <span aria-live="polite">{phase === "ready" ? "System ready" : "Booting portfolio"}</span>
+                <span aria-live="polite">
+                  {phase === "loading" ? "Booting portfolio" : phase === "welcome" ? "System ready" : "Entering portfolio"}
+                </span>
               </div>
             </motion.div>
+
+            <div className="absolute inset-0 z-20 flex items-center justify-center px-5">
+              <motion.div
+                className={`startup-pill relative flex h-16 min-w-[16rem] items-center overflow-hidden rounded-full bg-bg px-7 text-ink sm:min-w-[20rem] ${phase === "expanding" ? "startup-pill-expanding" : ""}`}
+                animate={
+                  phase === "expanding"
+                    ? { scale: 45 }
+                    : phase === "welcome"
+                      ? { scale: [1, 1.025, 1] }
+                      : { scale: 1 }
+                }
+                transition={
+                  phase === "expanding"
+                    ? { delay: 0.12, duration: 1.05, ease: premiumEase }
+                    : { duration: 0.36, ease: premiumEase }
+                }
+                onAnimationComplete={() => {
+                  if (phase === "expanding") finish();
+                }}
+              >
+                <AnimatePresence mode="wait" initial={false}>
+                  {phase === "loading" ? (
+                    <motion.div
+                      key="loading"
+                      className="flex w-full items-center justify-between gap-8"
+                      initial={false}
+                      animate={{ x: 0, opacity: 1 }}
+                      exit={{ x: -32, opacity: 0 }}
+                      transition={{ duration: 0.22, ease: premiumEase }}
+                    >
+                      <span className="font-mono text-xs font-semibold uppercase tracking-[0.16em]">Loading</span>
+                      <span className="flex items-center gap-2 font-mono text-sm tabular-nums text-ink/70">
+                        {String(progress).padStart(3, "0")}<span className="text-ink/35">%</span>
+                        <span className="h-4 w-2 bg-amber" aria-hidden="true" />
+                      </span>
+                    </motion.div>
+                  ) : (
+                    <motion.div
+                      key="welcome"
+                      className="flex w-full items-center justify-center gap-3"
+                      initial={{ x: 32, opacity: 0 }}
+                      animate={{ x: 0, opacity: phase === "expanding" ? 0 : 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: phase === "expanding" ? 0.16 : 0.24, ease: premiumEase }}
+                    >
+                      <span className="h-4 w-2 bg-amber" aria-hidden="true" />
+                      <span className="font-mono text-xs font-semibold uppercase tracking-[0.16em]">Welcome</span>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                <motion.span
+                  className="absolute inset-x-0 bottom-0 h-1 origin-left bg-amber"
+                  animate={{ opacity: phase === "expanding" ? 0 : 1 }}
+                  style={{ scaleX: progress / 100 }}
+                  transition={{ duration: 0.14 }}
+                />
+              </motion.div>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
