@@ -59,7 +59,7 @@ export default function StartupLoader({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (phase !== "welcome") return;
-    const timer = window.setTimeout(() => setPhase("expanding"), 620);
+    const timer = window.setTimeout(() => setPhase("expanding"), 920);
     return () => window.clearTimeout(timer);
   }, [phase]);
 
@@ -129,24 +129,29 @@ export default function StartupLoader({ children }: { children: ReactNode }) {
               </div>
             </motion.div>
 
-            <div className="absolute inset-0 z-20 flex items-center justify-center px-5">
+            <div
+              className={`startup-portal absolute inset-0 z-20 bg-bg ${phase === "expanding" ? "startup-portal-open" : ""}`}
+              onAnimationEnd={() => {
+                if (phase === "expanding") finish();
+              }}
+              aria-hidden="true"
+            />
+
+            <div className="absolute inset-0 z-30 flex items-center justify-center px-5">
               <motion.div
                 className={`startup-pill relative flex h-16 min-w-[16rem] items-center overflow-hidden rounded-full bg-bg px-7 text-ink sm:min-w-[20rem] ${phase === "expanding" ? "startup-pill-expanding" : ""}`}
                 animate={
                   phase === "expanding"
-                    ? { scale: 45 }
+                    ? { opacity: 0 }
                     : phase === "welcome"
-                      ? { scale: [1, 1.025, 1] }
-                      : { scale: 1 }
+                      ? { scale: [1, 1.025, 1], opacity: 1 }
+                      : { scale: 1, opacity: 1 }
                 }
                 transition={
                   phase === "expanding"
-                    ? { delay: 0.12, duration: 1.05, ease: premiumEase }
+                    ? { delay: 0.08, duration: 0.18, ease: premiumEase }
                     : { duration: 0.36, ease: premiumEase }
                 }
-                onAnimationComplete={() => {
-                  if (phase === "expanding") finish();
-                }}
               >
                 <AnimatePresence mode="wait" initial={false}>
                   {phase === "loading" ? (
@@ -154,9 +159,9 @@ export default function StartupLoader({ children }: { children: ReactNode }) {
                       key="loading"
                       className="flex w-full items-center justify-between gap-8"
                       initial={false}
-                      animate={{ x: 0, opacity: 1 }}
-                      exit={{ x: -32, opacity: 0 }}
-                      transition={{ duration: 0.22, ease: premiumEase }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.12, ease: premiumEase }}
                     >
                       <span className="font-mono text-xs font-semibold uppercase tracking-[0.16em]">Loading</span>
                       <span className="flex items-center gap-2 font-mono text-sm tabular-nums text-ink/70">
@@ -167,14 +172,40 @@ export default function StartupLoader({ children }: { children: ReactNode }) {
                   ) : (
                     <motion.div
                       key="welcome"
-                      className="flex w-full items-center justify-center gap-3"
-                      initial={{ x: 32, opacity: 0 }}
-                      animate={{ x: 0, opacity: phase === "expanding" ? 0 : 1 }}
+                      className="flex w-full items-center justify-center"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: phase === "expanding" ? 0 : 1 }}
                       exit={{ opacity: 0 }}
-                      transition={{ duration: phase === "expanding" ? 0.16 : 0.24, ease: premiumEase }}
+                      transition={{ duration: phase === "expanding" ? 0.16 : 0.08, ease: premiumEase }}
                     >
-                      <span className="h-4 w-2 bg-amber" aria-hidden="true" />
-                      <span className="font-mono text-xs font-semibold uppercase tracking-[0.16em]">Welcome</span>
+                      <div className="relative h-5 w-28 overflow-hidden font-mono text-xs font-semibold uppercase tracking-[0.12em]">
+                        <motion.span
+                          className="absolute inset-0 flex items-center justify-center"
+                          initial={{ clipPath: "inset(0 0% 0 0)" }}
+                          animate={{ clipPath: "inset(0 100% 0 0)" }}
+                          transition={{ delay: 0.04, duration: 0.58, ease: premiumEase }}
+                        >
+                          Loading
+                        </motion.span>
+                        <motion.span
+                          className="absolute inset-0 flex items-center justify-center"
+                          initial={{ clipPath: "inset(0 0 0 100%)" }}
+                          animate={{ clipPath: "inset(0 0 0 0%)" }}
+                          transition={{ delay: 0.04, duration: 0.58, ease: premiumEase }}
+                        >
+                          Welcome
+                        </motion.span>
+                        <motion.span
+                          className="absolute left-1/2 top-0 h-5 w-2 -translate-x-1/2 bg-ink"
+                          initial={{ x: 54, opacity: 1 }}
+                          animate={{ x: -54, opacity: [1, 1, 0] }}
+                          transition={{
+                            x: { delay: 0.04, duration: 0.58, ease: premiumEase },
+                            opacity: { delay: 0.04, duration: 0.68, times: [0, 0.84, 1], ease: premiumEase },
+                          }}
+                          aria-hidden="true"
+                        />
+                      </div>
                     </motion.div>
                   )}
                 </AnimatePresence>
