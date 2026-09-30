@@ -15,6 +15,7 @@ export default function StartupLoader({ children }: { children: ReactNode }) {
   const [progress, setProgress] = useState(reduceMotion ? 100 : 0);
   const frameRef = useRef<number | null>(null);
   const finishedRef = useRef(reduceMotion);
+  const lastProgressRef = useRef(reduceMotion ? 100 : 0);
 
   const finish = useCallback(() => {
     if (finishedRef.current) return;
@@ -35,7 +36,12 @@ export default function StartupLoader({ children }: { children: ReactNode }) {
     const tick = (now: number) => {
       const raw = Math.min((now - startedAt) / duration, 1);
       const eased = 1 - Math.pow(1 - raw, 3);
-      setProgress(Math.min(100, Math.floor(eased * 100)));
+      const nextProgress = Math.min(100, Math.floor(eased * 100));
+
+      if (nextProgress !== lastProgressRef.current) {
+        lastProgressRef.current = nextProgress;
+        setProgress(nextProgress);
+      }
 
       if (raw < 1) {
         frameRef.current = window.requestAnimationFrame(tick);
@@ -74,25 +80,18 @@ export default function StartupLoader({ children }: { children: ReactNode }) {
 
   return (
     <>
-      {phase === "complete" && (
-        <motion.div
-          className="site-shell"
-          initial={reduceMotion ? false : { opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.25, ease: premiumEase }}
-        >
-          {children}
-        </motion.div>
-      )}
+      <div className="site-shell" aria-hidden={phase !== "complete"}>
+        {children}
+      </div>
 
-      <AnimatePresence>
+      <AnimatePresence initial={false}>
         {phase !== "complete" && (
           <motion.div
             key="startup-loader"
             className="startup-loader fixed inset-0 z-[100] overflow-hidden"
             initial={false}
-            exit={{ clipPath: "inset(0 0 100% 0)" }}
-            transition={{ duration: 0.9, ease: premiumEase }}
+            exit={{ y: "-100%" }}
+            transition={{ duration: 0.82, ease: premiumEase }}
             role="dialog"
             aria-modal="true"
             aria-label="Portfolio loading"

@@ -66,7 +66,12 @@ body::before {
 .status-dot { display: inline-block; width: 0.42rem; height: 0.42rem; border-radius: 999px; flex: 0 0 auto; }
 
 /* Startup sequence */
-.startup-loader { background: var(--color-loader); color: var(--color-loader-ink); clip-path: inset(0); }
+.startup-loader {
+  background: var(--color-loader);
+  color: var(--color-loader-ink);
+  transform: translateZ(0);
+  will-change: transform;
+}
 .startup-grain {
   position: absolute;
   inset: 0;
