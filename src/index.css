@@ -78,10 +78,11 @@ body::before {
   will-change: transform;
 }
 .startup-portal {
-  --startup-pill-half: 8rem;
-  clip-path: inset(calc(50% - 2rem) calc(50% - var(--startup-pill-half)) round 999px);
+  backface-visibility: hidden;
   pointer-events: none;
-  will-change: clip-path;
+  transform: translate3d(-50%, -50%, 0) scale(1);
+  transform-origin: center;
+  will-change: transform;
 }
 .startup-portal-open { animation: startup-portal-open 1.12s cubic-bezier(.65,0,.35,1) forwards; }
 .startup-grain {
@@ -96,13 +97,8 @@ body::before {
 .startup-pill-expanding { box-shadow: none; }
 @keyframes loader-track { from { transform: translate3d(-5%,0,0); } to { transform: translate3d(-48%,0,0); } }
 @keyframes startup-portal-open {
-  0% { clip-path: inset(calc(50% - 2rem) calc(50% - var(--startup-pill-half)) round 999px); }
-  48% { clip-path: inset(calc(50% - 7rem) 7% round 999px); }
-  76% { clip-path: inset(14% -6% round 12rem); }
-  to { clip-path: inset(0 0 0 0 round 0); }
-}
-@media (min-width: 640px) {
-  .startup-portal { --startup-pill-half: 10rem; }
+  from { transform: translate3d(-50%, -50%, 0) scale(1); }
+  to { transform: translate3d(-50%, -50%, 0) scale(32); }
 }
 
 /* Navigation */

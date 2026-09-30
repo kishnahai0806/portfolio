@@ -130,7 +130,7 @@ export default function StartupLoader({ children }: { children: ReactNode }) {
             </motion.div>
 
             <div
-              className={`startup-portal absolute inset-0 z-20 bg-bg ${phase === "expanding" ? "startup-portal-open" : ""}`}
+              className={`startup-portal absolute left-1/2 top-1/2 z-20 h-16 w-64 rounded-full bg-bg sm:w-80 ${phase === "expanding" ? "startup-portal-open" : ""}`}
               onAnimationEnd={() => {
                 if (phase === "expanding") finish();
               }}
