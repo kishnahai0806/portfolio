@@ -67,8 +67,13 @@ body::before {
 
 /* Startup sequence */
 .startup-loader {
-  background: var(--color-loader);
   color: var(--color-loader-ink);
+  isolation: isolate;
+}
+.startup-panel {
+  background: var(--color-loader);
+  backface-visibility: hidden;
+  contain: paint;
   transform: translateZ(0);
   will-change: transform;
 }

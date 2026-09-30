@@ -9,6 +9,11 @@ type StartupPhase = "loading" | "ready" | "complete";
 
 const startupPhrases = [site.title, "Full stack systems"];
 
+const curtainTransition = {
+  duration: 0.95,
+  ease: premiumEase,
+};
+
 export default function StartupLoader({ children }: { children: ReactNode }) {
   const { reduceMotion } = useMotionPreferences();
   const [phase, setPhase] = useState<StartupPhase>(reduceMotion ? "complete" : "loading");
@@ -90,58 +95,82 @@ export default function StartupLoader({ children }: { children: ReactNode }) {
             key="startup-loader"
             className="startup-loader fixed inset-0 z-[100] overflow-hidden"
             initial={false}
-            exit={{ y: "-100%" }}
-            transition={{ duration: 0.82, ease: premiumEase }}
+            exit="exit"
+            variants={{
+              exit: { transition: { when: "afterChildren" } },
+            }}
             role="dialog"
             aria-modal="true"
             aria-label="Portfolio loading"
           >
-            <div className="startup-grain" aria-hidden="true" />
+            <motion.div
+              className="startup-panel absolute inset-x-0 top-0 h-[50.1%]"
+              variants={{ exit: { y: "-100%", transition: curtainTransition } }}
+              aria-hidden="true"
+            />
+            <motion.div
+              className="startup-panel absolute inset-x-0 bottom-0 h-[50.1%]"
+              variants={{ exit: { y: "100%", transition: curtainTransition } }}
+              aria-hidden="true"
+            />
 
-            <div className="absolute inset-x-5 top-5 flex items-center justify-between font-mono text-[10px] font-semibold uppercase tracking-[0.2em] text-loader-ink sm:inset-x-10 sm:top-8">
-              <span>KP / 2026</span>
-              <button
-                type="button"
-                onClick={finish}
-                className="rounded-full border border-loader-ink/25 px-4 py-2 transition-colors hover:border-loader-ink"
-              >
-                Skip intro
-              </button>
-            </div>
+            <motion.div
+              className="absolute inset-0 z-10"
+              variants={{
+                exit: {
+                  opacity: 0,
+                  scale: 0.992,
+                  transition: { duration: 0.18, ease: premiumEase },
+                },
+              }}
+            >
+              <div className="startup-grain" aria-hidden="true" />
 
-            <div className="absolute inset-0 flex items-center overflow-hidden" aria-hidden="true">
-              <div className="startup-track whitespace-nowrap text-[clamp(3rem,7vw,7.5rem)] font-semibold uppercase leading-none tracking-[-0.055em] text-loader-ink">
-                {[...startupPhrases, ...startupPhrases].map((phrase, index) => (
-                  <span key={`${phrase}-${index}`}>{phrase} <i>•</i> </span>
-                ))}
+              <div className="absolute inset-x-5 top-5 flex items-center justify-between font-mono text-[10px] font-semibold uppercase tracking-[0.2em] text-loader-ink sm:inset-x-10 sm:top-8">
+                <span>KP / 2026</span>
+                <button
+                  type="button"
+                  onClick={finish}
+                  className="rounded-full border border-loader-ink/25 px-4 py-2 transition-colors hover:border-loader-ink"
+                >
+                  Skip intro
+                </button>
               </div>
-            </div>
 
-            <div className="absolute inset-0 flex items-center justify-center px-5">
-              <motion.div
-                className="startup-pill relative flex min-w-[16rem] items-center justify-between gap-8 overflow-hidden rounded-full bg-bg px-7 py-5 text-white sm:min-w-[20rem]"
-                animate={phase === "ready" ? { scale: [1, 1.035, 1] } : { scale: 1 }}
-                transition={{ duration: 0.35, ease: premiumEase }}
-              >
-                <span className="font-mono text-xs font-semibold uppercase tracking-[0.16em]">
-                  {phase === "ready" ? "Welcome" : "Loading"}
-                </span>
-                <span className="flex items-center gap-2 font-mono text-sm tabular-nums text-white/70">
-                  {String(progress).padStart(3, "0")}<span className="text-white/35">%</span>
-                  <span className="h-4 w-2 bg-amber" aria-hidden="true" />
-                </span>
-                <motion.span
-                  className="absolute inset-x-0 bottom-0 h-1 origin-left bg-amber"
-                  style={{ scaleX: progress / 100 }}
-                />
-              </motion.div>
-            </div>
+              <div className="absolute inset-0 flex items-center overflow-hidden" aria-hidden="true">
+                <div className="startup-track whitespace-nowrap text-[clamp(3rem,7vw,7.5rem)] font-semibold uppercase leading-none tracking-[-0.055em] text-loader-ink">
+                  {[...startupPhrases, ...startupPhrases].map((phrase, index) => (
+                    <span key={`${phrase}-${index}`}>{phrase} <i>•</i> </span>
+                  ))}
+                </div>
+              </div>
 
-            <div className="absolute inset-x-5 bottom-5 flex items-end justify-between gap-6 font-mono text-[9px] uppercase tracking-[0.18em] text-loader-ink/55 sm:inset-x-10 sm:bottom-8 sm:text-[10px]">
-              <span>{site.title}</span>
-              <span className="hidden text-right sm:block">React / Spring / PostgreSQL / Docker</span>
-              <span aria-live="polite">{phase === "ready" ? "System ready" : "Booting portfolio"}</span>
-            </div>
+              <div className="absolute inset-0 flex items-center justify-center px-5">
+                <motion.div
+                  className="startup-pill relative flex min-w-[16rem] items-center justify-between gap-8 overflow-hidden rounded-full bg-bg px-7 py-5 text-white sm:min-w-[20rem]"
+                  animate={phase === "ready" ? { scale: [1, 1.035, 1] } : { scale: 1 }}
+                  transition={{ duration: 0.35, ease: premiumEase }}
+                >
+                  <span className="font-mono text-xs font-semibold uppercase tracking-[0.16em]">
+                    {phase === "ready" ? "Welcome" : "Loading"}
+                  </span>
+                  <span className="flex items-center gap-2 font-mono text-sm tabular-nums text-white/70">
+                    {String(progress).padStart(3, "0")}<span className="text-white/35">%</span>
+                    <span className="h-4 w-2 bg-amber" aria-hidden="true" />
+                  </span>
+                  <motion.span
+                    className="absolute inset-x-0 bottom-0 h-1 origin-left bg-amber"
+                    style={{ scaleX: progress / 100 }}
+                  />
+                </motion.div>
+              </div>
+
+              <div className="absolute inset-x-5 bottom-5 flex items-end justify-between gap-6 font-mono text-[9px] uppercase tracking-[0.18em] text-loader-ink/55 sm:inset-x-10 sm:bottom-8 sm:text-[10px]">
+                <span>{site.title}</span>
+                <span className="hidden text-right sm:block">React / Spring / PostgreSQL / Docker</span>
+                <span aria-live="polite">{phase === "ready" ? "System ready" : "Booting portfolio"}</span>
+              </div>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
