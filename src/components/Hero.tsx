@@ -46,7 +46,6 @@ export default function Hero() {
 
   return (
     <section id="home" aria-labelledby="hero-heading" className="hero relative min-h-[100svh] overflow-hidden border-b border-line">
-      <div className="hero-ambient" aria-hidden="true" />
 
       <div className="mx-auto flex min-h-[100svh] w-full max-w-[90rem] flex-col px-5 pb-7 pt-28 sm:px-8 lg:px-12">
         <Stagger trigger="mount" stagger={0.055} delay={0.12} className="relative z-10 grid flex-1 items-center gap-12 lg:grid-cols-[1.15fr_0.85fr] lg:gap-6">

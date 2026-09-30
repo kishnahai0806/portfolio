@@ -20,6 +20,10 @@ export default function StartupLoader({ children }: { children: ReactNode }) {
   const finish = useCallback(() => {
     if (finishedRef.current) return;
     finishedRef.current = true;
+    if (frameRef.current !== null) {
+      window.cancelAnimationFrame(frameRef.current);
+      frameRef.current = null;
+    }
     setPhase("complete");
   }, []);
 
@@ -34,6 +38,8 @@ export default function StartupLoader({ children }: { children: ReactNode }) {
     const duration = 2_550;
 
     const tick = (now: number) => {
+      if (finishedRef.current) return;
+
       const raw = Math.min((now - startedAt) / duration, 1);
       const eased = 1 - Math.pow(1 - raw, 3);
       const nextProgress = Math.min(100, Math.floor(eased * 100));
@@ -99,8 +105,6 @@ export default function StartupLoader({ children }: { children: ReactNode }) {
               animate={{ opacity: phase === "expanding" ? 0 : 1 }}
               transition={{ duration: 0.2, ease: premiumEase }}
             >
-              <div className="startup-grain" aria-hidden="true" />
-
               <div className="absolute inset-x-5 top-5 flex items-center justify-between font-mono text-[10px] font-semibold uppercase tracking-[0.2em] text-loader-ink sm:inset-x-10 sm:top-8">
                 <span>KP / 2026</span>
                 <button
@@ -112,7 +116,7 @@ export default function StartupLoader({ children }: { children: ReactNode }) {
                 </button>
               </div>
 
-              <div className="absolute inset-0 flex items-center overflow-hidden" aria-hidden="true">
+              <div className="pointer-events-none absolute inset-0 flex items-center overflow-hidden" aria-hidden="true">
                 <div className="startup-track whitespace-nowrap text-[clamp(3rem,7vw,7.5rem)] font-semibold uppercase leading-none tracking-[-0.055em] text-loader-ink">
                   {[...startupPhrases, ...startupPhrases].map((phrase, index) => (
                     <span key={`${phrase}-${index}`}>{phrase} <i>•</i> </span>
@@ -137,7 +141,7 @@ export default function StartupLoader({ children }: { children: ReactNode }) {
               aria-hidden="true"
             />
 
-            <div className="absolute inset-0 z-30 flex items-center justify-center px-5">
+            <div className="pointer-events-none absolute inset-0 z-30 flex items-center justify-center px-5">
               <motion.div
                 className={`startup-pill relative flex h-16 min-w-[16rem] items-center overflow-hidden rounded-full bg-bg px-7 text-ink sm:min-w-[20rem] ${phase === "expanding" ? "startup-pill-expanding" : ""}`}
                 animate={
