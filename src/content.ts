@@ -45,14 +45,7 @@ export const about = {
   paragraphs: [
     `I graduated from ${education.school} in ${education.grad} with a computer science degree and a ${education.gpa} GPA. I work across the stack, from React interfaces to backend services, automated tests, and production monitoring.`,
     "My main projects include an issue tracker that isolates each organization, two support services connected through Kafka, and the messaging backend for a college social platform.",
-    "I worked more than 20 hours a week at Amazon while taking a full course load. That forced me to plan my time and finish what I started.",
-    "I'm looking for entry level software engineering roles, including full stack and backend work.",
   ],
-};
-
-export type ProjectStatus = {
-  label: string;
-  tone: "ok" | "amber" | "dim";
 };
 
 export type Project = {
@@ -65,8 +58,6 @@ export type Project = {
   metrics: { label: string; value: string }[];
   decisions: string[];
   links: { label: string; href: string }[];
-  status: ProjectStatus;
-  featured?: boolean;
 };
 
 export const projects: Project[] = [
@@ -99,8 +90,6 @@ export const projects: Project[] = [
       "Used Redis pub/sub to fan STOMP events across replicas. ShedLock keeps scheduled jobs from running twice.",
     ],
     links: [{ label: "Source code", href: "https://github.com/kishnahai0806/Issue-Tracker" }],
-    status: { label: "load tested", tone: "ok" },
-    featured: true,
   },
   {
     id: "ai-support",
@@ -122,7 +111,6 @@ export const projects: Project[] = [
     links: [
       { label: "Source code", href: "https://github.com/kishnahai0806/AI-Support-Platform" },
     ],
-    status: { label: "live", tone: "ok" },
   },
   {
     id: "schoolem",
@@ -142,7 +130,6 @@ export const projects: Project[] = [
       "Covered the service with 93 unit and integration tests.",
     ],
     links: [{ label: "Live site", href: "https://officialschoolem.org" }],
-    status: { label: "live", tone: "ok" },
   },
   {
     id: "steelworks",
@@ -158,14 +145,13 @@ export const projects: Project[] = [
       "Used Docker to keep the development and deployment environments consistent.",
     ],
     links: [{ label: "Source code", href: "https://github.com/kishnahai0806/SteelWorks" }],
-    status: { label: "capstone", tone: "amber" },
   },
 ];
 
 export const skills: { group: string; items: string[] }[] = [
   {
     group: "Languages",
-    items: ["Java", "Python", "TypeScript", "SQL"],
+    items: ["Java", "Python", "TypeScript", "SQL", "C"],
   },
   {
     group: "Frameworks & Libraries",

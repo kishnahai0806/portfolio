@@ -1,16 +1,9 @@
 import { about, education, experience, projects, site, skills } from "../content";
-import type { ProjectStatus } from "../content";
 import { FaGithub, FaLinkedinIn } from "react-icons/fa6";
 import type { AnchorHTMLAttributes, ReactNode } from "react";
 import Section from "./Section";
 import TechIcon from "./TechIcon";
 import { Stagger, StaggerItem } from "./motion/Stagger";
-
-const statusTone: Record<ProjectStatus["tone"], string> = {
-  ok: "text-ok",
-  amber: "text-amber",
-  dim: "text-dim",
-};
 
 const socialLinks = [
   { label: "GitHub", href: site.github, Icon: FaGithub },
@@ -38,7 +31,7 @@ function ProjectDecision({ children }: { children: ReactNode }) {
 export default function PortfolioSections() {
   return (
     <div className="portfolio-sections">
-      <Section id="about" index={1} title="How I work." eyebrow="Profile / approach" status="open to work">
+      <Section id="about" index={1} title="How I work.">
         <div className="grid gap-12 lg:grid-cols-[0.72fr_1.28fr] lg:gap-20">
           <div className="about-statement">
             <p className="text-2xl font-medium leading-tight tracking-[-0.035em] text-ink sm:text-3xl md:text-4xl">
@@ -61,19 +54,12 @@ export default function PortfolioSections() {
 
       </Section>
 
-      <Section id="projects" index={2} title="Selected systems." eyebrow="Production work" wide emphasis status={`${projects.length} systems indexed`}>
+      <Section id="projects" index={2} title="Selected systems." wide>
         <Stagger className="grid gap-4 lg:grid-cols-2" stagger={0.06}>
-          {projects.map((project, projectIndex) => (
-            <StaggerItem key={project.id} preset="card" className={project.featured ? "lg:col-span-2" : ""}>
-              <article className={`project-card group relative flex h-full flex-col overflow-hidden rounded-[1.5rem] border border-line bg-panel ${project.featured ? "project-card-featured" : ""}`}>
-                <div className="relative z-10 flex items-start justify-between gap-4 border-b border-line px-5 py-4 sm:px-7">
-                  <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-dim">System / {String(projectIndex + 1).padStart(2, "0")}</p>
-                  <p className={`flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.14em] ${statusTone[project.status.tone]}`}>
-                    <span className="status-dot bg-current" />{project.status.label}
-                  </p>
-                </div>
-
-                <div className={`relative z-10 flex flex-1 flex-col p-5 sm:p-7 ${project.featured ? "lg:grid lg:grid-cols-[0.85fr_1.15fr] lg:gap-16" : ""}`}>
+          {projects.map((project) => (
+            <StaggerItem key={project.id} preset="card">
+              <article className="project-card relative flex h-full flex-col overflow-hidden rounded-[1.5rem] border border-line bg-panel">
+                <div className="relative z-10 flex flex-1 flex-col p-5 sm:p-7">
                   <div>
                     <h3 className="text-3xl font-semibold uppercase leading-none tracking-[-0.05em] text-ink sm:text-4xl">{project.name}</h3>
                     <p className="mt-3 max-w-xl text-sm leading-6 text-amber">{project.oneLiner}</p>
@@ -81,8 +67,8 @@ export default function PortfolioSections() {
                     {project.role && <p className="mt-4 font-mono text-[10px] uppercase tracking-[0.14em] text-dim">{project.role}</p>}
                   </div>
 
-                  <div className={`mt-8 flex flex-1 flex-col ${project.featured ? "lg:mt-0" : ""}`}>
-                    <div className="grid grid-cols-3 gap-px overflow-hidden rounded-xl border border-line bg-line">
+                  <div className="mt-8 flex flex-1 flex-col">
+                    <div className={`grid gap-px overflow-hidden rounded-xl border border-line bg-line ${project.metrics.length === 1 ? "grid-cols-1" : project.metrics.length === 2 ? "grid-cols-2" : "grid-cols-3"}`}>
                       {project.metrics.slice(0, 3).map((metric) => (
                         <div key={metric.label} className="bg-bg/65 p-3 sm:p-4">
                           <p className="metric-value text-lg font-semibold text-ink">{metric.value}</p>
@@ -112,7 +98,7 @@ export default function PortfolioSections() {
 
                     <div className="mt-auto flex flex-wrap items-end justify-between gap-5 pt-7">
                       <div className="flex max-w-xl flex-wrap gap-2">
-                        {project.tags.slice(0, project.featured ? 8 : 4).map((tag) => <span key={tag} className="tech-tag">{tag}</span>)}
+                        {project.tags.slice(0, 4).map((tag) => <span key={tag} className="tech-tag">{tag}</span>)}
                       </div>
                       {project.links.length > 0 && (
                         <div className="ml-auto flex shrink-0 gap-2">
@@ -135,7 +121,7 @@ export default function PortfolioSections() {
         </div>
       </Section>
 
-      <Section id="skills" index={3} title="The toolkit." eyebrow="Technologies with a job to do" status="toolchain online">
+      <Section id="skills" index={3} title="The toolkit.">
         <div className="grid gap-10 lg:grid-cols-[0.7fr_1.3fr] lg:gap-20">
           <div>
             <p className="text-2xl font-medium leading-tight tracking-[-0.03em] text-ink sm:text-3xl">I work across the stack, with a strong foundation in backend systems.</p>
@@ -161,7 +147,7 @@ export default function PortfolioSections() {
         </div>
       </Section>
 
-      <Section id="experience" index={4} title="Experience." eyebrow="Built under real constraints" status="history loaded">
+      <Section id="experience" index={4} title="Experience.">
         <div className="grid gap-14 lg:grid-cols-[1fr_0.7fr] lg:gap-20">
           <div className="border-t border-line">
             {experience.map((item, index) => (
@@ -195,7 +181,7 @@ export default function PortfolioSections() {
         </div>
       </Section>
 
-      <Section id="contact" index={5} title="Let's build something reliable." eyebrow="Contact / channel open" wide>
+      <Section id="contact" index={5} title="Let's build something reliable." wide>
         <div className="contact-panel relative overflow-hidden rounded-[1.75rem] border border-line px-6 py-10 sm:px-10 sm:py-14 lg:px-14">
           <div className="relative z-10 grid gap-12 lg:grid-cols-[1fr_auto] lg:items-end">
             <div>
