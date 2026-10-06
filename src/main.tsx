@@ -5,7 +5,7 @@ import App from "./App";
 import "./index.css";
 
 const accent = new URLSearchParams(window.location.search).get("accent");
-if (accent && ["cyan", "blue", "violet", "lime"].includes(accent)) {
+if (accent && ["orange", "cyan", "blue", "violet", "lime", "white"].includes(accent)) {
   document.documentElement.dataset.accent = accent;
 }
 
