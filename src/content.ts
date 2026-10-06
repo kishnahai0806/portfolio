@@ -162,32 +162,20 @@ export const projects: Project[] = [
   },
 ];
 
-/** Metric-style counters shown under the hero. */
-export const heroMetrics = [
-  { label: "Major software projects", value: String(projects.length) },
-  { label: "Computer science GPA", value: `${education.gpa} / 4.0` },
-];
-
 export const skills: { group: string; items: string[] }[] = [
   {
     group: "Languages",
-    items: ["Java", "Python", "TypeScript", "JavaScript", "SQL", "C"],
+    items: ["Java", "Python", "TypeScript", "SQL"],
   },
   {
     group: "Frameworks & Libraries",
     items: [
       "Spring Boot",
-      "Spring Security (OAuth2/JWT)",
-      "Spring Batch",
       "Apache Kafka",
-      "Hibernate/JPA",
       "REST APIs",
-      "WebSocket/STOMP",
       "React",
       "JUnit",
-      "Mockito",
       "Testcontainers",
-      "pytest",
       "Playwright",
     ],
   },
@@ -197,14 +185,9 @@ export const skills: { group: string; items: string[] }[] = [
       "Kubernetes",
       "Docker",
       "AWS",
-      "Railway",
-      "Linux",
-      "Nginx",
       "PostgreSQL",
       "Redis",
       "Supabase",
-      "MinIO",
-      "Liquibase",
     ],
   },
   {
@@ -214,14 +197,8 @@ export const skills: { group: string; items: string[] }[] = [
       "GitHub Actions (CI/CD)",
       "Prometheus",
       "Grafana",
-      "Micrometer",
       "Sentry",
       "OpenTelemetry",
-      "Jaeger",
-      "Bruno",
-      "Maven",
-      "OpenAPI/Swagger",
-      "OpenAI API",
     ],
   },
 ];

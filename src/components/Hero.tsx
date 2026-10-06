@@ -1,6 +1,5 @@
-import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
-import { heroMetrics, site } from "../content";
+import { site } from "../content";
 import { Stagger, StaggerItem } from "./motion/Stagger";
 
 const graphNodes = [
@@ -101,15 +100,13 @@ export default function Hero() {
               </div>
 
               {graphNodes.map((node) => (
-                <motion.div
+                <div
                   key={node.label}
                   className={`orbit-node ${node.className}`}
-                  animate={{ y: [0, -5, 0] }}
-                  transition={{ duration: 3.2, repeat: Infinity, ease: "easeInOut", delay: graphNodes.indexOf(node) * 0.22 }}
                 >
                   <span className="status-dot bg-ok text-ok" />
                   {node.label}
-                </motion.div>
+                </div>
               ))}
 
               <span className="orbit-label orbit-label-top">full stack / 05 layers</span>
@@ -118,26 +115,6 @@ export default function Hero() {
           </StaggerItem>
         </Stagger>
 
-        <div className="relative z-10 mt-10 flex items-center gap-4 font-mono text-[9px] uppercase tracking-[0.18em] text-dim">
-          <span>Selected results</span>
-          <span className="h-px flex-1 bg-line" aria-hidden="true" />
-        </div>
-
-        <Stagger trigger="mount" delay={0.52} stagger={0.06} className="hero-metrics relative z-10 mt-4 grid border-y border-line sm:grid-cols-2">
-          {heroMetrics.map((metric) => (
-            <StaggerItem key={metric.label} preset="metric" className="metric-cell">
-              <div className="hero-metric h-full px-5 py-5 sm:px-6">
-                <p className="font-mono text-[9px] uppercase tracking-[0.16em] text-dim">{metric.label}</p>
-                <p className="metric-value mt-1 text-xl font-medium tracking-tight text-ink">{metric.value}</p>
-              </div>
-            </StaggerItem>
-          ))}
-        </Stagger>
-
-        <div className="relative z-10 mt-5 flex items-center justify-between font-mono text-[9px] uppercase tracking-[0.18em] text-dim">
-          <span>Scroll to inspect</span>
-          <span className="scroll-indicator"><i /> 01 / 05</span>
-        </div>
       </div>
     </section>
   );

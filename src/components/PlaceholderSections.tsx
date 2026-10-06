@@ -12,12 +12,6 @@ const statusTone: Record<ProjectStatus["tone"], string> = {
   dim: "text-dim",
 };
 
-const aboutHighlights = [
-  ["Primary focus", "Reliable full stack software"],
-  ["Engineering bias", "Tested & observable"],
-  ["Current target", "Entry level software engineering"],
-] as const;
-
 const socialLinks = [
   { label: "GitHub", href: site.github, Icon: FaGithub },
   { label: "LinkedIn", href: site.linkedin, Icon: FaLinkedinIn },
@@ -65,14 +59,6 @@ export default function PortfolioSections() {
           </div>
         </div>
 
-        <div className="mt-16 grid gap-px overflow-hidden rounded-2xl border border-line bg-line sm:grid-cols-3">
-          {aboutHighlights.map(([label, value]) => (
-            <div key={label} className="bg-panel px-6 py-7">
-              <p className="font-mono text-[9px] uppercase tracking-[0.18em] text-dim">{label}</p>
-              <p className="mt-3 text-sm font-medium text-ink">{value}</p>
-            </div>
-          ))}
-        </div>
       </Section>
 
       <Section id="projects" index={2} title="Selected systems." eyebrow="Production work" wide emphasis status={`${projects.length} systems indexed`}>
@@ -80,7 +66,6 @@ export default function PortfolioSections() {
           {projects.map((project, projectIndex) => (
             <StaggerItem key={project.id} preset="card" className={project.featured ? "lg:col-span-2" : ""}>
               <article className={`project-card group relative flex h-full flex-col overflow-hidden rounded-[1.5rem] border border-line bg-panel ${project.featured ? "project-card-featured" : ""}`}>
-                <div className="project-scan" aria-hidden="true" />
                 <div className="relative z-10 flex items-start justify-between gap-4 border-b border-line px-5 py-4 sm:px-7">
                   <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-dim">System / {String(projectIndex + 1).padStart(2, "0")}</p>
                   <p className={`flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.14em] ${statusTone[project.status.tone]}`}>

@@ -175,10 +175,7 @@ a { text-decoration: none; }
 .button-primary:hover { transform: translateY(-2px); background: var(--color-amber); }
 .button-quiet { border: 1px solid var(--color-line); color: var(--color-ink); }
 .button-quiet:hover { transform: translateY(-2px); color: var(--color-amber); border-color: var(--color-amber); }
-.metric-cell { border-bottom: 1px solid var(--color-line); }
 .metric-value { display: flex; min-height: 1.5rem; align-items: center; line-height: 1; font-variant-numeric: tabular-nums; }
-.scroll-indicator { display: flex; align-items: center; gap: .75rem; }
-.scroll-indicator i { display: block; width: 3.2rem; height: 1px; background: linear-gradient(90deg, var(--color-amber), var(--color-line)); }
 
 /* System orbit */
 .system-orbit {
@@ -262,8 +259,6 @@ a { text-decoration: none; }
 .project-card:hover { transform: translateY(-4px); border-color: #454a43; }
 .project-card-featured { min-height: 31rem; background: radial-gradient(circle at 84% 20%, color-mix(in srgb, var(--color-amber) 11%, transparent), transparent 30%), var(--color-panel); }
 .project-all-link { min-width: min(100%, 18rem); }
-.project-scan { position: absolute; inset: 0; opacity: 0; background: linear-gradient(110deg,transparent 25%,rgba(255,255,255,.025) 48%,transparent 70%); transform: translateX(-45%); transition: opacity .4s ease, transform .8s cubic-bezier(.16,1,.3,1); }
-.project-card:hover .project-scan { opacity: 1; transform: translateX(38%); }
 .tech-tag { border: 1px solid var(--color-line); border-radius: 999px; padding: .38rem .62rem; color: var(--color-dim); font-family: var(--font-mono); font-size: .52rem; text-transform: uppercase; letter-spacing: .09em; }
 .project-link { border-bottom: 1px solid var(--color-amber); padding-bottom: .3rem; color: var(--color-ink); font-family: var(--font-mono); font-size: .62rem; text-transform: uppercase; letter-spacing: .1em; transition: color .2s ease; }
 .project-link:hover { color: var(--color-amber); }
@@ -298,17 +293,9 @@ html[data-theme="light"] .orbit-lines .route-line { stroke: rgba(86,79,68,.58); 
 html[data-theme="light"] .core-node { background: #fffdf8; box-shadow: 0 0 0 12px color-mix(in srgb, var(--color-amber) 4.5%, transparent), 0 16px 45px rgba(79,61,37,.14); }
 html[data-theme="light"] .orbit-node { border-color: #c2baad; background: rgba(255,253,248,.94); box-shadow: 0 10px 35px rgba(54,45,30,.15); }
 html[data-theme="light"] .nav-link:hover, html[data-theme="light"] .skill-row:hover { background: rgba(17,18,15,.035); }
-html[data-theme="light"] .project-scan { background: linear-gradient(110deg,transparent 25%,rgba(255,255,255,.25) 48%,transparent 70%); }
 html[data-theme="light"] .contact-panel::after { color: rgba(17,18,15,.035); }
 
-@media (min-width: 640px) {
-  .metric-cell { border-right: 1px solid var(--color-line); }
-  .metric-cell:nth-child(even) { border-right: 0; }
-}
 @media (min-width: 1024px) {
-  .metric-cell { border-bottom: 0; border-right: 1px solid var(--color-line); }
-  .metric-cell:nth-child(even) { border-right: 1px solid var(--color-line); }
-  .metric-cell:last-child { border-right: 0; }
   .about-statement { position: sticky; top: 8rem; min-height: 18rem; align-self: start; }
 }
 @media (max-width: 639px) {
