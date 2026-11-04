@@ -1,6 +1,7 @@
 import BackToTop from "./components/BackToTop";
 import Hero from "./components/Hero";
 import Nav from "./components/Nav";
+import PaletteLab from "./components/PaletteLab";
 import PlaceholderSections from "./components/PlaceholderSections";
 import ScrollProgress from "./components/ScrollProgress";
 import StartupLoader from "./components/StartupLoader";
@@ -19,14 +20,15 @@ export default function App() {
         </a>
         <ScrollProgress />
         <Nav />
+        {import.meta.env.DEV && <PaletteLab />}
         <BackToTop />
         <main id="main" tabIndex={-1} className="relative overflow-clip">
           <Hero />
           <PlaceholderSections />
         </main>
-        <footer className="flex flex-col gap-3 border-t border-line px-6 py-7 font-mono text-[9px] uppercase tracking-[0.16em] text-dim sm:flex-row sm:items-center sm:justify-between">
+        <footer className="flex flex-col gap-3 border-t border-line px-6 py-7 font-mono text-xs text-dim sm:flex-row sm:items-center sm:justify-between">
           <span>{"\u00A9"} {new Date().getFullYear()} {site.name}</span>
-          <span>Designed with intent <span className="text-amber">/</span> Engineered for production</span>
+          <span>Software Engineer <span className="text-amber">/</span> Java and backend systems</span>
         </footer>
       </StartupLoader>
     </MotionPreferencesProvider>

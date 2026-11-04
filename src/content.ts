@@ -34,8 +34,8 @@ export const education = {
 
 export const nav = [
   { label: "Home", href: "#home" },
-  { label: "About", href: "#about" },
   { label: "Projects", href: "#projects" },
+  { label: "About", href: "#about" },
   { label: "Skills", href: "#skills" },
   { label: "Experience", href: "#experience" },
   { label: "Contact", href: "#contact" },
@@ -96,7 +96,7 @@ export const projects: Project[] = [
     name: "AI Support Platform",
     oneLiner: "Kafka connects two services that classify and route support tickets.",
     description:
-      "Customers submit tickets to one Spring Boot service. Kafka sends each ticket to a second service for OpenAI classification. Both run on Railway with managed PostgreSQL and Redis.",
+      "Customers submit tickets to one Spring Boot service. Kafka carries each ticket to a second service for OpenAI classification, then carries the result back so the saved ticket can be updated.",
     tags: ["Spring Boot", "Kafka", "OpenAI API", "PostgreSQL", "Redis", "Railway", "Docker"],
     metrics: [
       { label: "tests", value: "74" },
@@ -104,7 +104,7 @@ export const projects: Project[] = [
       { label: "services", value: "2" },
     ],
     decisions: [
-      "Kafka keeps slow or failed model calls out of the request path. Ticket creation returns before classification finishes.",
+      "Kafka keeps slow or failed model calls out of the request path. Ticket creation returns before classification finishes, and the result comes back through Kafka.",
       "Added Micrometer metrics for ticket throughput, processing time, and model confidence, then graphed them in Grafana.",
       "CI runs 74 automated tests and fails if coverage drops below 80%.",
     ],
@@ -145,6 +145,41 @@ export const projects: Project[] = [
       "Used Docker to keep the development and deployment environments consistent.",
     ],
     links: [{ label: "Source code", href: "https://github.com/kishnahai0806/SteelWorks" }],
+  },
+];
+
+export const aiSupportFlow = {
+  note: "Ticket creation returns before classification finishes.",
+  ticketService: {
+    name: "Ticket service",
+    detail: "Spring Boot API",
+  },
+  broker: {
+    name: "Kafka",
+  },
+  classificationService: {
+    name: "Classification service",
+    detail: "OpenAI classification",
+  },
+  outbound: "Ticket created",
+  inbound: "Classification result",
+};
+
+export const issueTrackerArchitecture = [
+  {
+    layer: "Infrastructure",
+    primary: "Kubernetes",
+    secondary: "2 to 8 replicas",
+  },
+  {
+    layer: "Application",
+    primary: "Java 21 / Spring Boot",
+    secondary: "WebSocket / Spring Batch",
+  },
+  {
+    layer: "Data",
+    primary: "PostgreSQL / Redis",
+    secondary: "MinIO",
   },
 ];
 
