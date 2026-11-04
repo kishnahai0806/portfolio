@@ -68,7 +68,7 @@ export default function Nav() {
       <nav className="nav-shell mx-auto flex h-14 max-w-[88rem] items-center justify-between rounded-full border border-line/90 bg-bg/80 px-3 shadow-2xl shadow-black/20 backdrop-blur-xl sm:px-5" aria-label="Primary navigation">
         <a href="#home" className="group flex items-center gap-3 rounded-full" aria-label={`${site.name}, home`}>
           <span className="grid h-8 w-8 place-items-center rounded-full bg-amber font-mono text-[11px] font-bold text-bg transition-transform group-hover:rotate-6">KP</span>
-          <span className="hidden font-mono text-[10px] uppercase tracking-[0.16em] text-mut sm:block">{site.title}</span>
+          <span className="hidden font-mono text-xs text-mut sm:block">{site.title}</span>
         </a>
 
         <div className="hidden items-center gap-1 lg:flex">
@@ -103,8 +103,8 @@ export default function Nav() {
               )}
             </span>
           </button>
-          <a href={`mailto:${site.email}`} className="hidden rounded-full border border-line px-4 py-2 font-mono text-[10px] uppercase tracking-[0.14em] text-ink transition-colors hover:border-amber hover:text-amber sm:block">
-            Start a conversation
+          <a href={`mailto:${site.email}`} className="hidden rounded-lg border border-line px-4 py-2 text-sm font-medium text-ink transition-colors hover:border-amber hover:text-amber sm:block">
+            Email me
           </a>
           <button
             type="button"
@@ -123,14 +123,14 @@ export default function Nav() {
         {open && (
           <motion.div
             id="mobile-navigation"
-            className="mx-auto mt-2 max-w-[88rem] overflow-hidden rounded-3xl border border-line bg-panel p-3 shadow-2xl"
+            className="fixed inset-x-4 bottom-4 top-20 overflow-y-auto rounded-3xl border border-line bg-panel/95 p-3 shadow-2xl backdrop-blur-2xl"
             initial={{ opacity: 0, y: -8, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -8, scale: 0.98 }}
           >
             {nav.map((item, index) => (
-              <a key={item.href} href={item.href} onClick={() => { setActiveHref(item.href); setOpen(false); }} className="flex items-center justify-between border-b border-line px-4 py-4 font-mono text-sm uppercase text-ink last:border-0">
-                <span><span className="mr-3 text-amber">0{index + 1}</span>{item.label}</span><span aria-hidden="true">↘</span>
+              <a key={item.href} href={item.href} onClick={() => { setActiveHref(item.href); setOpen(false); }} className="flex min-h-14 items-center justify-between border-b border-line px-4 py-4 text-lg font-medium text-ink last:border-0">
+                <span><span className="mr-3 font-mono text-xs text-amber">0{index + 1}</span>{item.label}</span><span aria-hidden="true">/</span>
               </a>
             ))}
           </motion.div>

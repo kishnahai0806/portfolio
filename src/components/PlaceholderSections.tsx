@@ -1,9 +1,16 @@
-import { about, education, experience, projects, site, skills } from "../content";
 import { FaGithub, FaLinkedinIn } from "react-icons/fa6";
+import { AnimatePresence, motion } from "framer-motion";
+import { useState } from "react";
 import type { AnchorHTMLAttributes, ReactNode } from "react";
+import { about, aiSupportFlow, education, experience, issueTrackerArchitecture, projects, site, skills } from "../content";
+import type { Project } from "../content";
+import Reveal from "./Reveal";
 import Section from "./Section";
 import TechIcon from "./TechIcon";
-import { Stagger, StaggerItem } from "./motion/Stagger";
+import { useMotionPreferences } from "./motion/MotionPreferences";
+import { premiumEase } from "./motion/motionPresets";
+
+const [issueTracker, aiSupport, schoolem, steelworks] = projects;
 
 const socialLinks = [
   { label: "GitHub", href: site.github, Icon: FaGithub },
@@ -21,179 +28,555 @@ function ExternalLink({ children, ...props }: ExternalLinkProps) {
 
 function ProjectDecision({ children }: { children: ReactNode }) {
   return (
-    <li className="flex gap-3 text-xs leading-6 text-mut sm:text-sm">
-      <span className="mt-[0.6rem] h-px w-3 shrink-0 bg-amber" aria-hidden="true" />
-      {children}
+    <li className="project-decision">
+      <span aria-hidden="true" />
+      <p>{children}</p>
     </li>
   );
 }
 
+function ProjectMetrics({ project, compact = false }: { project: Project; compact?: boolean }) {
+  return (
+    <div className={`project-metrics ${compact ? "project-metrics-compact" : ""}`}>
+      {project.metrics.slice(0, 3).map((metric) => (
+        <div key={metric.label}>
+          <strong>{metric.value}</strong>
+          <span>{metric.label.replaceAll("_", " ")}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function ProjectTags({ project, limit }: { project: Project; limit?: number }) {
+  const tags = typeof limit === "number" ? project.tags.slice(0, limit) : project.tags;
+  return (
+    <div className="project-tags" aria-label={`${project.name} technologies`}>
+      {tags.map((tag) => <span key={tag} className="tech-tag">{tag}</span>)}
+    </div>
+  );
+}
+
+function ProjectDetailDisclosure({
+  id,
+  label,
+  hideLabel = "Hide details",
+  children,
+}: {
+  id: string;
+  label: string;
+  hideLabel?: string;
+  children: ReactNode;
+}) {
+  const [open, setOpen] = useState(false);
+  const { reduceMotion } = useMotionPreferences();
+
+  return (
+    <div className={`project-disclosure ${open ? "project-disclosure-open" : ""}`}>
+      <button
+        type="button"
+        className="project-disclosure-button"
+        aria-expanded={open}
+        aria-controls={id}
+        onClick={() => setOpen((current) => !current)}
+      >
+        <span>{open ? hideLabel : label}</span>
+        <i aria-hidden="true" />
+      </button>
+      <AnimatePresence initial={false}>
+        {open && (
+          <motion.div
+            id={id}
+            className="project-disclosure-panel"
+            initial={{ opacity: 0, y: reduceMotion ? 0 : 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: reduceMotion ? 0 : -6 }}
+            transition={{ duration: reduceMotion ? 0.2 : 0.5, ease: premiumEase }}
+          >
+            {children}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
+function ProjectLinks({ project }: { project: Project }) {
+  return (
+    <div className="project-links">
+      {project.links.map((link) => (
+        <ExternalLink key={link.label} href={link.href} className="project-link">{link.label}</ExternalLink>
+      ))}
+    </div>
+  );
+}
+
+function ArchitectureLayers() {
+  const { reduceMotion } = useMotionPreferences();
+
+  return (
+    <div
+      className="architecture-linework"
+      role="img"
+      aria-label="Issue Tracker architecture with Kubernetes infrastructure, a Java and Spring Boot application layer, and PostgreSQL, Redis, and MinIO data services."
+    >
+      <div className="architecture-linework-heading" aria-hidden="true">
+        <span>System architecture</span>
+        <span>Request path</span>
+      </div>
+
+      <motion.div
+        className="architecture-layers"
+        initial={reduceMotion ? false : "hidden"}
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.45 }}
+        variants={{
+          hidden: {},
+          visible: { transition: { staggerChildren: 0.14 } },
+        }}
+        aria-hidden="true"
+      >
+        <svg className="architecture-trace" viewBox="0 0 48 320" preserveAspectRatio="none">
+          <path d="M24 20 L24 300" />
+          {!reduceMotion && (
+            <motion.circle
+              cx="24"
+              cy="32"
+              r="5"
+              initial={{ opacity: 0, y: 0 }}
+              whileInView={{ opacity: [0, 1, 1, 0], y: [0, 0, 256, 256] }}
+              viewport={{ once: true, amount: 0.45 }}
+              transition={{ duration: 2.2, times: [0, 0.12, 0.86, 1], ease: premiumEase }}
+            />
+          )}
+        </svg>
+
+        {issueTrackerArchitecture.map((item, index) => (
+          <motion.div
+            key={item.layer}
+            className={`architecture-layer architecture-layer-${index + 1}`}
+            variants={{
+              hidden: { opacity: 0, x: 16 },
+              visible: { opacity: 1, x: 0, transition: { duration: 0.52, ease: premiumEase } },
+            }}
+          >
+            <span className="architecture-layer-index">0{index + 1}</span>
+            <div>
+              <span>{item.layer}</span>
+              <strong>{item.primary}</strong>
+              <small>{item.secondary}</small>
+            </div>
+          </motion.div>
+        ))}
+      </motion.div>
+    </div>
+  );
+}
+
+function FeaturedProject() {
+  return (
+    <Reveal preset="media" amount={0.12}>
+      <article className="featured-project">
+        <div className="featured-project-copy">
+          <h3>{issueTracker.name}</h3>
+          <p className="project-one-liner">{issueTracker.oneLiner}</p>
+          <p className="project-description">{issueTracker.description}</p>
+          <ProjectMetrics project={issueTracker} />
+          <ul className="project-decisions project-decisions-primary">
+            {issueTracker.decisions.slice(0, 2).map((decision) => <ProjectDecision key={decision}>{decision}</ProjectDecision>)}
+          </ul>
+          <ProjectDetailDisclosure id="issue-tracker-engineering-details" label="Explore implementation details">
+            <ul className="project-decisions project-decisions-secondary">
+              {issueTracker.decisions.slice(2).map((decision) => <ProjectDecision key={decision}>{decision}</ProjectDecision>)}
+            </ul>
+            <div className="project-detail-tags" aria-label="Additional Issue Tracker technologies">
+              {issueTracker.tags.slice(6).map((tag) => <span key={tag} className="tech-tag">{tag}</span>)}
+            </div>
+          </ProjectDetailDisclosure>
+          <div className="project-footer">
+            <ProjectTags project={issueTracker} limit={6} />
+            <ProjectLinks project={issueTracker} />
+          </div>
+        </div>
+        <div className="featured-project-visual">
+          <ArchitectureLayers />
+        </div>
+      </article>
+    </Reveal>
+  );
+}
+
+function KafkaLinework() {
+  const { reduceMotion } = useMotionPreferences();
+
+  return (
+    <div
+      className="kafka-linework"
+      role="img"
+      aria-label="The Ticket service publishes a ticket through Kafka to the Classification service. The classification result returns through Kafka to update the ticket."
+    >
+      <div className="kafka-linework-note">
+        <span>Why asynchronous?</span>
+        <p>{aiSupportFlow.note}</p>
+      </div>
+
+      <div className="kafka-flow" aria-hidden="true">
+        <div className="kafka-flow-nodes">
+          <div className="kafka-flow-node kafka-flow-ticket">
+            <strong>{aiSupportFlow.ticketService.name}</strong>
+            <span>{aiSupportFlow.ticketService.detail}</span>
+          </div>
+          <div className="kafka-flow-node kafka-flow-broker">
+            <strong>{aiSupportFlow.broker.name}</strong>
+          </div>
+          <div className="kafka-flow-node kafka-flow-classification">
+            <strong>{aiSupportFlow.classificationService.name}</strong>
+            <span>{aiSupportFlow.classificationService.detail}</span>
+          </div>
+        </div>
+
+        <svg className="kafka-flow-routes" viewBox="0 0 720 176" preserveAspectRatio="none">
+          <path className="kafka-flow-route kafka-flow-route-outbound" d="M72 56 H648" />
+          <path className="kafka-flow-route kafka-flow-route-inbound" d="M648 124 H72" />
+          <circle className="kafka-flow-junction" cx="360" cy="56" r="4" />
+          <circle className="kafka-flow-junction" cx="360" cy="124" r="4" />
+          {!reduceMotion && (
+            <>
+              <motion.circle
+                className="kafka-flow-signal kafka-flow-signal-outbound"
+                cx="72"
+                cy="56"
+                r="5"
+                initial={{ opacity: 0, x: 0 }}
+                whileInView={{ opacity: [0, 1, 1, 0], x: [0, 0, 576, 576] }}
+                viewport={{ once: true, amount: 0.5 }}
+                transition={{ duration: 1.8, delay: 0.2, times: [0, 0.1, 0.9, 1], ease: premiumEase }}
+              />
+              <motion.circle
+                className="kafka-flow-signal kafka-flow-signal-inbound"
+                cx="648"
+                cy="124"
+                r="5"
+                initial={{ opacity: 0, x: 0 }}
+                whileInView={{ opacity: [0, 1, 1, 0], x: [0, 0, -576, -576] }}
+                viewport={{ once: true, amount: 0.5 }}
+                transition={{ duration: 1.8, delay: 2.05, times: [0, 0.1, 0.9, 1], ease: premiumEase }}
+              />
+            </>
+          )}
+        </svg>
+
+        <div className="kafka-flow-label kafka-flow-label-outbound">
+          <span>{aiSupportFlow.outbound}</span>
+          <i>→</i>
+        </div>
+        <div className="kafka-flow-label kafka-flow-label-inbound">
+          <i>←</i>
+          <span>{aiSupportFlow.inbound}</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function EventDrivenProject() {
+  const [flowOpen, setFlowOpen] = useState(false);
+  const { reduceMotion } = useMotionPreferences();
+
+  return (
+    <Reveal preset="body" amount={0.12}>
+      <motion.article
+        layout
+        className="event-project"
+        transition={{ layout: { duration: reduceMotion ? 0 : 0.5, ease: premiumEase } }}
+      >
+        <div className="event-project-copy">
+          <h3>{aiSupport.name}</h3>
+          <p className="project-one-liner">{aiSupport.oneLiner}</p>
+          <p className="project-description">{aiSupport.description}</p>
+          <ProjectMetrics project={aiSupport} compact />
+        </div>
+
+        <div className={`kafka-disclosure ${flowOpen ? "kafka-disclosure-open" : ""}`}>
+          <div className="kafka-disclosure-summary">
+            <div>
+              <span>Architecture</span>
+              <p aria-label="Ticket service to Kafka to Classification, then back through Kafka to update the ticket">
+                Ticket service <i aria-hidden="true">→</i> Kafka <i aria-hidden="true">→</i> Classification
+                <i aria-hidden="true">→</i> Kafka <i aria-hidden="true">→</i> Ticket update
+              </p>
+            </div>
+            <button
+              type="button"
+              className="kafka-disclosure-button"
+              aria-expanded={flowOpen}
+              aria-controls="ai-support-kafka-flow"
+              onClick={() => setFlowOpen((current) => !current)}
+            >
+              <span>{flowOpen ? "Hide Kafka flow" : "Explore Kafka flow"}</span>
+              <i aria-hidden="true" />
+            </button>
+          </div>
+
+          <AnimatePresence initial={false}>
+            {flowOpen && (
+              <motion.div
+                id="ai-support-kafka-flow"
+                className="kafka-disclosure-panel"
+                initial={{ opacity: 0, y: reduceMotion ? 0 : 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: reduceMotion ? 0 : -8 }}
+                transition={{ duration: reduceMotion ? 0.2 : 0.5, ease: premiumEase }}
+              >
+                <KafkaLinework />
+                <ul className="project-decisions kafka-detail-decisions">
+                  {aiSupport.decisions.slice(2).map((decision) => <ProjectDecision key={decision}>{decision}</ProjectDecision>)}
+                </ul>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+
+        <div className="event-project-details">
+          <ul className="project-decisions">
+            {aiSupport.decisions.slice(0, 2).map((decision) => <ProjectDecision key={decision}>{decision}</ProjectDecision>)}
+          </ul>
+          <div className="project-footer">
+            <ProjectTags project={aiSupport} />
+            <ProjectLinks project={aiSupport} />
+          </div>
+        </div>
+      </motion.article>
+    </Reveal>
+  );
+}
+
+function SchoolemSignal() {
+  const { reduceMotion } = useMotionPreferences();
+
+  return (
+    <div
+      className="supporting-visual schoolem-signal"
+      role="img"
+      aria-label="Schoolem messaging service saves a message, then publishes a Supabase Realtime event and notification after the database transaction commits."
+    >
+      <div className="schoolem-signal-track" aria-hidden="true">
+        {[
+          ["Messaging", "Spring Boot"],
+          ["Saved", "Database"],
+          ["Realtime", "Supabase"],
+          ["Notify", "After commit"],
+        ].map(([label, detail], index) => (
+          <motion.div
+            key={label}
+            className="schoolem-signal-node"
+            initial={reduceMotion ? false : { opacity: 0, y: 8 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.65 }}
+            transition={{ duration: 0.45, delay: reduceMotion ? 0 : index * 0.08, ease: premiumEase }}
+          >
+            <span>0{index + 1}</span>
+            <strong>{label}</strong>
+            <small>{detail}</small>
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function SteelWorksQuality() {
+  const { reduceMotion } = useMotionPreferences();
+
+  return (
+    <div
+      className="supporting-visual steelworks-quality"
+      role="img"
+      aria-label="SteelWorks quality path from the Python dashboard through pytest and Playwright testing, Sentry monitoring, and Docker deployment consistency."
+    >
+      <div className="steelworks-quality-heading" aria-hidden="true">
+        <span>Quality path</span>
+        <span>Capstone</span>
+      </div>
+      <div className="steelworks-quality-track" aria-hidden="true">
+        {["Python dashboard", "pytest", "Playwright", "Sentry", "Docker"].map((label, index) => (
+          <motion.div
+            key={label}
+            className="steelworks-quality-step"
+            initial={reduceMotion ? false : { opacity: 0, x: -8 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, amount: 0.65 }}
+            transition={{ duration: 0.45, delay: reduceMotion ? 0 : index * 0.07, ease: premiumEase }}
+          >
+            <i />
+            <span>{label}</span>
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function SupportingProject({ project, variant }: { project: Project; variant: "schoolem" | "steelworks" }) {
+  const descriptionSentences = project.description.match(/[^.!?]+[.!?]+|[^.!?]+$/g)?.map((sentence) => sentence.trim()) ?? [project.description];
+  const [descriptionSummary, ...descriptionDetails] = descriptionSentences;
+
+  return (
+    <article className={`supporting-project supporting-project-${variant}`}>
+      <div className="supporting-project-copy">
+        <h3>{project.name}</h3>
+        <p className="project-one-liner">{project.oneLiner}</p>
+        {project.role && <p className="project-role">{project.role}</p>}
+        <p className="project-description">{descriptionSummary}</p>
+      </div>
+      <div className="supporting-project-evidence">
+        <ProjectMetrics project={project} compact />
+        <ul className="project-decisions project-decisions-primary">
+          {project.decisions.slice(0, 1).map((decision) => <ProjectDecision key={decision}>{decision}</ProjectDecision>)}
+        </ul>
+      </div>
+      <div className="supporting-project-artifact">
+        {variant === "schoolem" ? <SchoolemSignal /> : <SteelWorksQuality />}
+      </div>
+      <div className="supporting-project-meta">
+        <ProjectDetailDisclosure id={`${project.id}-engineering-details`} label="View engineering notes">
+          {descriptionDetails.length > 0 && <p className="project-detail-copy">{descriptionDetails.join(" ")}</p>}
+          <ul className="project-decisions project-decisions-secondary">
+            {project.decisions.slice(1).map((decision) => <ProjectDecision key={decision}>{decision}</ProjectDecision>)}
+          </ul>
+          {project.tags.length > 4 && (
+            <div className="project-detail-tags" aria-label={`Additional ${project.name} technologies`}>
+              {project.tags.slice(4).map((tag) => <span key={tag} className="tech-tag">{tag}</span>)}
+            </div>
+          )}
+        </ProjectDetailDisclosure>
+        <div className="project-footer">
+          <ProjectTags project={project} limit={4} />
+          <ProjectLinks project={project} />
+        </div>
+      </div>
+    </article>
+  );
+}
+
 export default function PortfolioSections() {
+  const coreSkillNames = new Set(["Java", "Spring Boot", "Apache Kafka", "REST APIs", "Kubernetes", "Docker", "PostgreSQL", "Redis"]);
+  const coreSkills = skills.flatMap((group) => group.items).filter((item) => coreSkillNames.has(item));
+
   return (
     <div className="portfolio-sections">
-      <Section id="about" index={1} title="How I work.">
-        <div className="grid gap-12 lg:grid-cols-[0.72fr_1.28fr] lg:gap-20">
-          <div className="about-statement">
-            <p className="text-2xl font-medium leading-tight tracking-[-0.035em] text-ink sm:text-3xl md:text-4xl">
-              I care about how software behaves when things <span className="text-amber">go wrong.</span>
-            </p>
-            <p className="mt-6 font-mono text-xs uppercase leading-6 tracking-[0.12em] text-dim">
-              Race conditions. Data boundaries. Failed requests. Traffic spikes. The problems that separate a working demo from dependable software.
-            </p>
-          </div>
-
-          <div className="grid gap-8 text-base leading-8 text-mut sm:grid-cols-2 sm:text-lg">
-            {about.paragraphs.map((paragraph, index) => (
-              <div key={paragraph} className={index === 0 ? "sm:col-span-2 sm:max-w-4xl" : ""}>
-                <span className="mb-3 block font-mono text-[10px] tracking-[0.18em] text-amber">0{index + 1}</span>
-                <p>{paragraph}</p>
-              </div>
-            ))}
+      <Section id="projects" title="Systems with evidence." wide>
+        <div className="projects-intro">
+          <p>Selected work</p>
+          <span>Backend architecture, data boundaries, asynchronous services, automated tests, and production monitoring.</span>
+        </div>
+        <div className="projects-stack">
+          <FeaturedProject />
+          <EventDrivenProject />
+          <div className="supporting-projects">
+            <SupportingProject project={schoolem} variant="schoolem" />
+            <SupportingProject project={steelworks} variant="steelworks" />
           </div>
         </div>
-
-      </Section>
-
-      <Section id="projects" index={2} title="Selected systems." wide>
-        <Stagger className="grid gap-4 lg:grid-cols-2" stagger={0.06}>
-          {projects.map((project) => (
-            <StaggerItem key={project.id} preset="card">
-              <article className="project-card relative flex h-full flex-col overflow-hidden rounded-[1.5rem] border border-line bg-panel">
-                <div className="relative z-10 flex flex-1 flex-col p-5 sm:p-7">
-                  <div>
-                    <h3 className="text-3xl font-semibold uppercase leading-none tracking-[-0.05em] text-ink sm:text-4xl">{project.name}</h3>
-                    <p className="mt-3 max-w-xl text-sm leading-6 text-amber">{project.oneLiner}</p>
-                    <p className="mt-5 text-sm leading-7 text-mut">{project.description}</p>
-                    {project.role && <p className="mt-4 font-mono text-[10px] uppercase tracking-[0.14em] text-dim">{project.role}</p>}
-                  </div>
-
-                  <div className="mt-8 flex flex-1 flex-col">
-                    <div className={`grid gap-px overflow-hidden rounded-xl border border-line bg-line ${project.metrics.length === 1 ? "grid-cols-1" : project.metrics.length === 2 ? "grid-cols-2" : "grid-cols-3"}`}>
-                      {project.metrics.slice(0, 3).map((metric) => (
-                        <div key={metric.label} className="bg-bg/65 p-3 sm:p-4">
-                          <p className="metric-value text-lg font-semibold text-ink">{metric.value}</p>
-                          <p className="mt-1 truncate font-mono text-[8px] uppercase tracking-[0.12em] text-dim">{metric.label}</p>
-                        </div>
-                      ))}
-                    </div>
-
-                    <ul className="mt-6 space-y-3">
-                      {project.decisions.slice(0, 1).map((decision) => (
-                        <ProjectDecision key={decision}>{decision}</ProjectDecision>
-                      ))}
-                    </ul>
-
-                    {project.decisions.length > 1 && (
-                      <details className="project-details mt-5 border-t border-line pt-4">
-                        <summary className="cursor-pointer list-none font-mono text-[9px] uppercase tracking-[0.14em] text-dim transition-colors hover:text-amber">
-                          <span>More engineering details</span><span className="detail-marker" aria-hidden="true">+</span>
-                        </summary>
-                        <ul className="mt-4 space-y-3">
-                          {project.decisions.slice(1).map((decision) => (
-                            <ProjectDecision key={decision}>{decision}</ProjectDecision>
-                          ))}
-                        </ul>
-                      </details>
-                    )}
-
-                    <div className="mt-auto flex flex-wrap items-end justify-between gap-5 pt-7">
-                      <div className="flex max-w-xl flex-wrap gap-2">
-                        {project.tags.slice(0, 4).map((tag) => <span key={tag} className="tech-tag">{tag}</span>)}
-                      </div>
-                      {project.links.length > 0 && (
-                        <div className="ml-auto flex shrink-0 gap-2">
-                          {project.links.map((link) => (
-                            <ExternalLink key={link.label} href={link.href} className="project-link whitespace-nowrap">{link.label} ↗</ExternalLink>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </article>
-            </StaggerItem>
-          ))}
-        </Stagger>
         <div className="mt-8 flex justify-end">
-          <ExternalLink href={site.github} className="button-quiet project-all-link">
-            View all projects on GitHub <span aria-hidden="true">↗</span>
-          </ExternalLink>
+          <ExternalLink href={site.github} className="button-quiet project-all-link">View all projects on GitHub</ExternalLink>
         </div>
       </Section>
 
-      <Section id="skills" index={3} title="The toolkit.">
-        <div className="grid gap-10 lg:grid-cols-[0.7fr_1.3fr] lg:gap-20">
-          <div>
-            <p className="text-2xl font-medium leading-tight tracking-[-0.03em] text-ink sm:text-3xl">I work across the stack, with a strong foundation in backend systems.</p>
-            <p className="mt-5 max-w-md text-sm leading-7 text-mut">I pick tools based on the work they need to do: keep data correct, make failures visible, and get the service into production.</p>
-          </div>
-
-          <div className="border-t border-line">
-            {skills.map((group, index) => (
-              <div key={group.group} className="skill-row grid gap-5 border-b border-line py-6 md:grid-cols-[3rem_14rem_1fr]">
-                <span className="font-mono text-[10px] text-amber">0{index + 1}</span>
-                <h3 className="text-sm font-semibold uppercase tracking-[-0.01em] text-ink">{group.group}</h3>
-                <div className="flex flex-wrap gap-x-4 gap-y-3">
-                  {group.items.map((item) => (
-                    <span key={item} className="skill-item font-mono text-xs text-mut">
-                      <TechIcon name={item} />
-                      <span>{item}</span>
-                    </span>
-                  ))}
+      <Section id="about" title="Profile and core stack.">
+        <div className="profile-stack-layout">
+          <div className="profile-column">
+            <p className="profile-label">Backend first. Full stack when it matters.</p>
+            <div className="about-copy">
+              {about.paragraphs.map((paragraph) => (
+                <div key={paragraph}>
+                  <p>{paragraph}</p>
                 </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </Section>
-
-      <Section id="experience" index={4} title="Experience.">
-        <div className="grid gap-14 lg:grid-cols-[1fr_0.7fr] lg:gap-20">
-          <div className="border-t border-line">
-            {experience.map((item, index) => (
-              <article key={`${item.org}-${item.role}`} className="grid gap-5 border-b border-line py-7 sm:grid-cols-[3rem_1fr_auto]">
-                <span className="font-mono text-[10px] text-amber">0{index + 1}</span>
-                <div>
-                  <h3 className="text-lg font-medium text-ink">{item.role}</h3>
-                  <p className="mt-1 text-sm text-mut">{item.org}</p>
-                  {item.bullets.length > 0 && <p className="mt-4 max-w-2xl text-sm leading-7 text-dim">{item.bullets.join(" ")}</p>}
-                </div>
-                <div className="font-mono text-[10px] uppercase leading-5 tracking-[0.1em] text-dim sm:text-right">
-                  <p>{item.period}</p><p>{item.location}</p>
-                </div>
-              </article>
-            ))}
-          </div>
-
-          <aside className="education-card rounded-[1.5rem] border border-line p-7 sm:p-9 lg:-mt-px lg:self-start">
-            <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-amber">Education / completed</p>
-            <h3 className="mt-10 text-3xl font-semibold uppercase leading-none tracking-[-0.045em] text-ink">{education.degree}</h3>
-            <p className="mt-4 text-base text-mut">{education.school}</p>
-            <div className="mt-6 border-t border-line pt-5">
-              <p className="font-mono text-[9px] uppercase tracking-[0.14em] text-dim">Relevant coursework</p>
-              <p className="mt-3 text-xs leading-6 text-mut">{education.coursework.join(" · ")}</p>
+              ))}
             </div>
-            <div className="mt-10 grid grid-cols-2 gap-px overflow-hidden rounded-xl bg-line">
-              <div className="bg-bg/75 p-4"><p className="font-mono text-[9px] uppercase text-dim">GPA</p><p className="mt-2 text-2xl text-ink">{education.gpa}</p></div>
-              <div className="bg-bg/75 p-4"><p className="font-mono text-[9px] uppercase text-dim">Graduated</p><p className="mt-2 text-lg text-ink">{education.grad}</p></div>
+          </div>
+
+          <section id="skills" className="core-stack-panel" aria-labelledby="skills-heading">
+            <div className="core-stack-heading">
+              <div>
+                <span>Core backend stack</span>
+                <h3 id="skills-heading">Java systems from API to deployment.</h3>
+              </div>
+              <p>Languages, frameworks, infrastructure, data, testing, and observability.</p>
+            </div>
+            <div className="core-skills" aria-label="Core backend technologies">
+              {coreSkills.map((item) => (
+                <span key={item} className="core-skill-item">
+                  <TechIcon name={item} />
+                  <strong>{item}</strong>
+                </span>
+              ))}
+            </div>
+            <div className="skills-list skills-list-supporting">
+              {skills.map((group) => {
+                const supportingItems = group.items.filter((item) => !coreSkillNames.has(item));
+                if (supportingItems.length === 0) return null;
+                return (
+                  <div key={group.group} className="skill-row">
+                    <h3>{group.group}</h3>
+                    <div>
+                      {supportingItems.map((item) => (
+                        <span key={item} className="skill-item">
+                          <TechIcon name={item} />
+                          <span>{item}</span>
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </section>
+        </div>
+      </Section>
+
+      <Section id="experience" title="Education and experience.">
+        <div className="experience-layout experience-layout-education-first">
+          <aside className="education-card">
+            <p className="education-kicker">Education</p>
+            <h3>{education.degree}</h3>
+            <p>{education.school}</p>
+            <div className="education-metrics">
+              <div><strong>{education.gpa}</strong><span>GPA</span></div>
+              <div><strong>{education.grad}</strong><span>Graduated</span></div>
+            </div>
+            <div className="education-coursework">
+              <span>Relevant coursework</span>
+              <p>{education.coursework.join(" · ")}</p>
             </div>
           </aside>
+
+          <div className="experience-list">
+            {experience.map((item) => (
+              <article key={`${item.org}-${item.role}`}>
+                <div>
+                  <h3>{item.role}</h3>
+                  <p>{item.org}</p>
+                  {item.bullets.length > 0 && <p className="experience-detail">{item.bullets.join(" ")}</p>}
+                </div>
+                <div className="experience-meta"><p>{item.period}</p><p>{item.location}</p></div>
+              </article>
+            ))}
+          </div>
         </div>
       </Section>
 
-      <Section id="contact" index={5} title="Let's build something reliable." wide>
-        <div className="contact-panel relative overflow-hidden rounded-[1.75rem] border border-line px-6 py-10 sm:px-10 sm:py-14 lg:px-14">
-          <div className="relative z-10 grid gap-12 lg:grid-cols-[1fr_auto] lg:items-end">
-            <div>
-              <p className="max-w-2xl text-lg leading-8 text-mut">I&apos;m applying for entry level software engineering roles, including full stack and backend work. If your team is hiring, send me a note.</p>
-              <a href={`mailto:${site.email}`} className="mt-9 inline-flex border-b border-amber pb-2 text-[clamp(1.45rem,4vw,4rem)] font-semibold tracking-[-0.045em] text-ink transition-colors hover:text-amber">{site.email} ↗</a>
-            </div>
-            <div className="flex flex-wrap gap-3 lg:justify-end">
-              {socialLinks.map(({ label, href, Icon }) => (
-                <ExternalLink key={label} href={href} className="social-link"><Icon aria-hidden="true" /><span>{label} ↗</span></ExternalLink>
-              ))}
-              <a href={site.resumeUrl} download={site.resumeFilename} className="social-link">Résumé ↓</a>
-            </div>
+      <Section id="contact" title="Build something reliable." wide>
+        <div className="contact-panel">
+          <div>
+            <p>For software engineering opportunities, project questions, or a conversation about the work shown here.</p>
+            <a href={`mailto:${site.email}`} className="contact-email">{site.email}</a>
+          </div>
+          <div className="contact-links">
+            {socialLinks.map(({ label, href, Icon }) => (
+              <ExternalLink key={label} href={href} className="social-link"><Icon aria-hidden="true" /><span>{label}</span></ExternalLink>
+            ))}
+            <a href={site.resumeUrl} download={site.resumeFilename} className="social-link">Résumé</a>
           </div>
         </div>
       </Section>
