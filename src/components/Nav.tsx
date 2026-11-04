@@ -1,4 +1,3 @@
-import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { nav, site } from "../content";
 
@@ -119,23 +118,19 @@ export default function Nav() {
         </div>
       </nav>
 
-      <AnimatePresence>
-        {open && (
-          <motion.div
-            id="mobile-navigation"
-            className="fixed inset-x-4 bottom-4 top-20 overflow-y-auto rounded-3xl border border-line bg-panel/95 p-3 shadow-2xl backdrop-blur-2xl"
-            initial={{ opacity: 0, y: -8, scale: 0.98 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -8, scale: 0.98 }}
-          >
-            {nav.map((item, index) => (
-              <a key={item.href} href={item.href} onClick={() => { setActiveHref(item.href); setOpen(false); }} className="flex min-h-14 items-center justify-between border-b border-line px-4 py-4 text-lg font-medium text-ink last:border-0">
-                <span><span className="mr-3 font-mono text-xs text-amber">0{index + 1}</span>{item.label}</span><span aria-hidden="true">/</span>
-              </a>
-            ))}
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {open && (
+        <nav
+          id="mobile-navigation"
+          className="mobile-navigation fixed inset-x-4 bottom-4 top-20 overflow-y-auto rounded-3xl border border-line bg-panel p-3 shadow-2xl"
+          aria-label="Mobile navigation"
+        >
+          {nav.map((item, index) => (
+            <a key={item.href} href={item.href} onClick={() => { setActiveHref(item.href); setOpen(false); }} className="flex min-h-14 items-center justify-between border-b border-line px-4 py-4 text-lg font-medium text-ink last:border-0">
+              <span><span className="mr-3 font-mono text-xs text-amber">0{index + 1}</span>{item.label}</span><span aria-hidden="true">/</span>
+            </a>
+          ))}
+        </nav>
+      )}
     </header>
   );
 }

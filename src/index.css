@@ -923,6 +923,11 @@ html[data-theme="light"] .cinematic-hero {
   .featured-project::before { filter: blur(56px); opacity: .08; }
 }
 
+@media (max-width: 1023px) {
+  html { scroll-behavior: auto; }
+  .mobile-navigation { overscroll-behavior: contain; }
+}
+
 @media (max-width: 639px) {
   .hero-actions { width: 100%; }
   .hero-actions .button-primary,.hero-actions .button-quiet { width: 100%; }
