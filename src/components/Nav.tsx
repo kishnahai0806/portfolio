@@ -52,14 +52,9 @@ export default function Nav() {
 
   useEffect(() => {
     if (!open) return;
-    const previousOverflow = document.body.style.overflow;
     const close = (event: KeyboardEvent) => event.key === "Escape" && setOpen(false);
-    document.body.style.overflow = "hidden";
     window.addEventListener("keydown", close);
-    return () => {
-      document.body.style.overflow = previousOverflow;
-      window.removeEventListener("keydown", close);
-    };
+    return () => window.removeEventListener("keydown", close);
   }, [open]);
 
   return (
