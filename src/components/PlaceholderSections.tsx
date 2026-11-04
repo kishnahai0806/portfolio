@@ -1,7 +1,7 @@
 import { FaGithub, FaLinkedinIn } from "react-icons/fa6";
 import { AnimatePresence, motion } from "framer-motion";
-import { useState } from "react";
-import type { AnchorHTMLAttributes, ReactNode } from "react";
+import { useRef, useState } from "react";
+import type { AnchorHTMLAttributes, KeyboardEvent, ReactNode } from "react";
 import { about, aiSupportFlow, education, experience, issueTrackerArchitecture, projects, site, skills } from "../content";
 import type { Project } from "../content";
 import Reveal from "./Reveal";
@@ -176,34 +176,32 @@ function ArchitectureLayers() {
 
 function FeaturedProject() {
   return (
-    <Reveal preset="media" amount={0.12}>
-      <article className="featured-project">
-        <div className="featured-project-copy">
-          <h3>{issueTracker.name}</h3>
-          <p className="project-one-liner">{issueTracker.oneLiner}</p>
-          <p className="project-description">{issueTracker.description}</p>
-          <ProjectMetrics project={issueTracker} />
-          <ul className="project-decisions project-decisions-primary">
-            {issueTracker.decisions.slice(0, 2).map((decision) => <ProjectDecision key={decision}>{decision}</ProjectDecision>)}
+    <article className="featured-project">
+      <div className="featured-project-copy">
+        <h3>{issueTracker.name}</h3>
+        <p className="project-one-liner">{issueTracker.oneLiner}</p>
+        <p className="project-description">{issueTracker.description}</p>
+        <ProjectMetrics project={issueTracker} />
+        <ul className="project-decisions project-decisions-primary">
+          {issueTracker.decisions.slice(0, 2).map((decision) => <ProjectDecision key={decision}>{decision}</ProjectDecision>)}
+        </ul>
+        <ProjectDetailDisclosure id="issue-tracker-engineering-details" label="Explore implementation details">
+          <ul className="project-decisions project-decisions-secondary">
+            {issueTracker.decisions.slice(2).map((decision) => <ProjectDecision key={decision}>{decision}</ProjectDecision>)}
           </ul>
-          <ProjectDetailDisclosure id="issue-tracker-engineering-details" label="Explore implementation details">
-            <ul className="project-decisions project-decisions-secondary">
-              {issueTracker.decisions.slice(2).map((decision) => <ProjectDecision key={decision}>{decision}</ProjectDecision>)}
-            </ul>
-            <div className="project-detail-tags" aria-label="Additional Issue Tracker technologies">
-              {issueTracker.tags.slice(6).map((tag) => <span key={tag} className="tech-tag">{tag}</span>)}
-            </div>
-          </ProjectDetailDisclosure>
-          <div className="project-footer">
-            <ProjectTags project={issueTracker} limit={6} />
-            <ProjectLinks project={issueTracker} />
+          <div className="project-detail-tags" aria-label="Additional Issue Tracker technologies">
+            {issueTracker.tags.slice(6).map((tag) => <span key={tag} className="tech-tag">{tag}</span>)}
           </div>
+        </ProjectDetailDisclosure>
+        <div className="project-footer">
+          <ProjectTags project={issueTracker} limit={6} />
+          <ProjectLinks project={issueTracker} />
         </div>
-        <div className="featured-project-visual">
-          <ArchitectureLayers />
-        </div>
-      </article>
-    </Reveal>
+      </div>
+      <div className="featured-project-visual">
+        <ArchitectureLayers />
+      </div>
+    </article>
   );
 }
 
@@ -286,12 +284,11 @@ function EventDrivenProject() {
   const { reduceMotion } = useMotionPreferences();
 
   return (
-    <Reveal preset="body" amount={0.12}>
-      <motion.article
-        layout
-        className="event-project"
-        transition={{ layout: { duration: reduceMotion ? 0 : 0.5, ease: premiumEase } }}
-      >
+    <motion.article
+      layout
+      className="event-project"
+      transition={{ layout: { duration: reduceMotion ? 0 : 0.5, ease: premiumEase } }}
+    >
         <div className="event-project-copy">
           <h3>{aiSupport.name}</h3>
           <p className="project-one-liner">{aiSupport.oneLiner}</p>
@@ -348,8 +345,7 @@ function EventDrivenProject() {
             <ProjectLinks project={aiSupport} />
           </div>
         </div>
-      </motion.article>
-    </Reveal>
+    </motion.article>
   );
 }
 
@@ -463,6 +459,115 @@ function SupportingProject({ project, variant }: { project: Project; variant: "s
   );
 }
 
+function ProjectGallery() {
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const tabRefs = useRef<Array<HTMLButtonElement | null>>([]);
+  const { reduceMotion, allowScrollMotion } = useMotionPreferences();
+  const selectedProject = projects[selectedIndex];
+  const panelMotion = !reduceMotion && allowScrollMotion;
+
+  const selectProject = (index: number, moveFocus = false) => {
+    setSelectedIndex(index);
+    if (moveFocus) tabRefs.current[index]?.focus();
+  };
+
+  const handleTabKeyDown = (event: KeyboardEvent<HTMLButtonElement>, index: number) => {
+    let nextIndex: number | null = null;
+
+    if (event.key === "ArrowRight" || event.key === "ArrowDown") nextIndex = (index + 1) % projects.length;
+    if (event.key === "ArrowLeft" || event.key === "ArrowUp") nextIndex = (index - 1 + projects.length) % projects.length;
+    if (event.key === "Home") nextIndex = 0;
+    if (event.key === "End") nextIndex = projects.length - 1;
+
+    if (nextIndex !== null) {
+      event.preventDefault();
+      selectProject(nextIndex, true);
+    }
+  };
+
+  const renderSelectedProject = () => {
+    switch (selectedProject.id) {
+      case issueTracker.id:
+        return <FeaturedProject />;
+      case aiSupport.id:
+        return <EventDrivenProject />;
+      case schoolem.id:
+        return <SupportingProject project={schoolem} variant="schoolem" />;
+      default:
+        return <SupportingProject project={steelworks} variant="steelworks" />;
+    }
+  };
+
+  return (
+    <Reveal preset="body" amount={0.08}>
+      <div className="project-gallery">
+        <div className="project-gallery-heading">
+          <p>Project index</p>
+          <span>Choose a project to inspect its architecture, engineering decisions, and evidence.</span>
+        </div>
+
+        <div className="project-gallery-index" role="tablist" aria-label="Selected software projects">
+          {projects.map((project, index) => {
+            const selected = selectedIndex === index;
+            const evidence = project.metrics[0];
+
+            return (
+              <button
+                key={project.id}
+                ref={(node) => { tabRefs.current[index] = node; }}
+                id={`project-tab-${project.id}`}
+                type="button"
+                role="tab"
+                className={`project-selector ${selected ? "project-selector-selected" : ""}`}
+                aria-selected={selected}
+                aria-controls={`project-panel-${project.id}`}
+                tabIndex={selected ? 0 : -1}
+                onClick={() => selectProject(index)}
+                onKeyDown={(event) => handleTabKeyDown(event, index)}
+              >
+                <span className="project-selector-topline">
+                  <span>0{index + 1}</span>
+                  <span>{selected ? "Selected" : "View project"}</span>
+                </span>
+                <strong>{project.name}</strong>
+                <span className="project-selector-summary">{project.oneLiner}</span>
+                {evidence && (
+                  <span className="project-selector-evidence">
+                    <span>{evidence.label.replaceAll("_", " ")}</span>
+                    <strong>{evidence.value}</strong>
+                  </span>
+                )}
+              </button>
+            );
+          })}
+        </div>
+
+        <div className="project-stage">
+          <div className="project-stage-heading" aria-hidden="true">
+            <span>Selected case study</span>
+            <span>0{selectedIndex + 1} / 0{projects.length}</span>
+          </div>
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.div
+              key={selectedProject.id}
+              id={`project-panel-${selectedProject.id}`}
+              role="tabpanel"
+              aria-labelledby={`project-tab-${selectedProject.id}`}
+              className="project-stage-panel"
+              initial={{ opacity: 0, y: panelMotion ? 16 : 0 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: panelMotion ? -10 : 0 }}
+              transition={{ duration: reduceMotion ? 0.2 : 0.5, ease: premiumEase }}
+            >
+              {renderSelectedProject()}
+            </motion.div>
+          </AnimatePresence>
+        </div>
+      </div>
+    </Reveal>
+  );
+}
+
 export default function PortfolioSections() {
   const coreSkillNames = new Set(["Java", "Spring Boot", "Apache Kafka", "REST APIs", "Kubernetes", "Docker", "PostgreSQL", "Redis"]);
   const coreSkills = skills.flatMap((group) => group.items).filter((item) => coreSkillNames.has(item));
@@ -474,14 +579,7 @@ export default function PortfolioSections() {
           <p>Selected work</p>
           <span>Backend architecture, data boundaries, asynchronous services, automated tests, and production monitoring.</span>
         </div>
-        <div className="projects-stack">
-          <FeaturedProject />
-          <EventDrivenProject />
-          <div className="supporting-projects">
-            <SupportingProject project={schoolem} variant="schoolem" />
-            <SupportingProject project={steelworks} variant="steelworks" />
-          </div>
-        </div>
+        <ProjectGallery />
         <div className="mt-8 flex justify-end">
           <ExternalLink href={site.github} className="button-quiet project-all-link">View all projects on GitHub</ExternalLink>
         </div>
