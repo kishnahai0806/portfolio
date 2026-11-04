@@ -8,10 +8,10 @@ type MotionLineProps = {
 };
 
 export default function MotionLine({ className, delay = 0 }: MotionLineProps) {
-  const { reduceMotion } = useMotionPreferences();
+  const { allowScrollMotion } = useMotionPreferences();
   const classes = `block h-px origin-left bg-line ${className ?? ""}`;
 
-  if (reduceMotion) return <span aria-hidden="true" className={classes} />;
+  if (!allowScrollMotion) return <span aria-hidden="true" className={classes} />;
 
   return (
     <motion.span

@@ -21,6 +21,6 @@ function AnimatedScrollProgress() {
 }
 
 export default function ScrollProgress() {
-  const { reduceMotion } = useMotionPreferences();
-  return reduceMotion ? null : <AnimatedScrollProgress />;
+  const { allowScrollMotion } = useMotionPreferences();
+  return allowScrollMotion ? <AnimatedScrollProgress /> : null;
 }
