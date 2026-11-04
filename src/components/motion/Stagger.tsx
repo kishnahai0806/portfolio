@@ -28,9 +28,11 @@ export function Stagger({
   trigger = "viewport",
   once = true,
 }: StaggerProps) {
-  const { reduceMotion } = useMotionPreferences();
+  const { reduceMotion, allowScrollMotion } = useMotionPreferences();
 
-  if (reduceMotion) return <div className={className}>{children}</div>;
+  if (reduceMotion || (trigger === "viewport" && !allowScrollMotion)) {
+    return <div className={className}>{children}</div>;
+  }
 
   const triggerProps = trigger === "mount"
     ? { animate: "visible" as const }

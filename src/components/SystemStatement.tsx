@@ -4,7 +4,7 @@ import { useMotionPreferences } from "./motion/MotionPreferences";
 const statement = "I work on the interface, the API, the data behind it, and the tests that keep it working.";
 
 export default function SystemStatement() {
-  const { reduceMotion } = useMotionPreferences();
+  const { allowScrollMotion } = useMotionPreferences();
   const words = statement.split(" ");
 
   return (
@@ -12,7 +12,7 @@ export default function SystemStatement() {
       <div className="system-statement-grid" aria-hidden="true" />
       <div className="system-statement-inner">
         <p className="system-statement-label">Across the full system</p>
-        {reduceMotion ? (
+        {!allowScrollMotion ? (
           <p className="system-statement-copy">{statement}</p>
         ) : (
           <motion.p

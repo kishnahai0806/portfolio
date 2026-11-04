@@ -34,20 +34,20 @@ html[data-accent="lime"] { --color-amber: #a8d94b; --color-amber-dim: #6f9b24; }
 html[data-accent="white"] { --color-amber: #ffffff; --color-amber-dim: #b7bab4; }
 html[data-theme="light"] {
   color-scheme: light;
-  --color-bg: #ece9e1;
-  --color-panel: #f7f4ec;
-  --color-panel-2: #e3ded3;
-  --color-line: #c9c3b6;
+  --color-bg: #e7e4db;
+  --color-panel: #faf8f2;
+  --color-panel-2: #d8d2c6;
+  --color-line: #b6afa1;
   --color-ink: #11120f;
-  --color-mut: #55584f;
-  --color-dim: #71746b;
-  --color-amber: #39797b;
-  --color-amber-dim: #2b6264;
-  --color-art: #39797b;
+  --color-mut: #454940;
+  --color-dim: #5f635b;
+  --color-amber: #2f686a;
+  --color-amber-dim: #255456;
+  --color-art: #2f686a;
   --color-accent-2: #11120f;
   --color-ok: #277a46;
-  --color-statement-muted: #9f9b91;
-  --color-cinematic-primary: #39797b;
+  --color-statement-muted: #858178;
+  --color-cinematic-primary: #2f686a;
   --color-cinematic-highlight: #db2777;
   --color-cinematic-warm: #db2777;
 }
@@ -648,6 +648,21 @@ html[data-palette] .orbit-node { border-color: var(--color-line); background: va
   --shadow-high: 0 2rem 4rem color-mix(in srgb,var(--color-bg) 56%,transparent);
 }
 
+html[data-theme="light"] {
+  --shadow-low: 0 .5rem 1.5rem rgba(56,48,37,.1);
+  --shadow-high: 0 2rem 4rem rgba(56,48,37,.14);
+}
+
+html[data-theme="light"] .cinematic-hero {
+  --color-bg: #080f17;
+  --color-panel: #101927;
+  --color-line: #334155;
+  --color-ink: #f8fafc;
+  --color-mut: #cbd5e1;
+  --color-cinematic-primary: #75b8ba;
+  background: var(--color-bg);
+}
+
 .cinematic-hero {
   isolation: isolate;
   background: var(--color-bg);
@@ -885,10 +900,24 @@ html[data-palette] .orbit-node { border-color: var(--color-line); background: va
   .cinematic-subtitle { margin-top: 1.5rem; font-size: 1rem; line-height: 1.5rem; }
   .hero-system-wrap { margin-top: 1rem; }
   .cinematic-system { min-height: 25rem; }
-  .hero-light { filter: blur(52px); }
-  .hero-light-blue { top: 38%; left: -45%; width: 28rem; height: 24rem; }
-  .hero-light-pink { right: -50%; bottom: 5%; width: 28rem; height: 24rem; }
-  .hero-light-coral { bottom: 10%; left: 25%; width: 16rem; height: 14rem; }
+  .hero-light-blue {
+    top: 38%;
+    left: -45%;
+    width: 28rem;
+    height: 24rem;
+  }
+  .hero-light-pink {
+    right: -50%;
+    bottom: 5%;
+    width: 28rem;
+    height: 24rem;
+  }
+  .hero-light-coral {
+    bottom: 10%;
+    left: 25%;
+    width: 16rem;
+    height: 14rem;
+  }
   .system-core { top: 48%; width: 12rem; }
   .system-core strong { font-size: 1.5rem; }
   .system-halo { top: 48%; }
@@ -897,6 +926,36 @@ html[data-palette] .orbit-node { border-color: var(--color-line); background: va
   .system-halo-inner { width: 14rem; height: 14rem; }
   .system-routes,.system-layer,.system-caption { display: none; }
   .system-horizon { bottom: 2rem; }
+}
+
+@media (max-width: 1023px) {
+  html { scroll-behavior: auto; }
+  .hero-light { filter: none; opacity: 1; }
+  .hero-light-blue { background: radial-gradient(ellipse at center,color-mix(in srgb,var(--color-cinematic-primary) 58%,transparent),transparent 70%); }
+  .hero-light-pink { background: radial-gradient(ellipse at center,color-mix(in srgb,var(--color-cinematic-highlight) 52%,transparent),transparent 70%); }
+  .hero-light-coral { background: radial-gradient(ellipse at center,color-mix(in srgb,var(--color-cinematic-warm) 46%,transparent),transparent 70%); }
+  .system-horizon { box-shadow: none; }
+  .system-halo::before,.system-routes path,.system-core { animation: none; }
+  .nav-shell,
+  .cinematic-hero .button-quiet,
+  .system-core,
+  .system-layer,
+  .back-to-top,
+  .palette-lab-toggle,
+  .palette-lab-panel { backdrop-filter: none; }
+  #projects.section-frame::before {
+    background: radial-gradient(ellipse at center,color-mix(in srgb,var(--color-cinematic-primary) 18%,transparent),transparent 70%);
+    filter: none;
+    opacity: 1;
+  }
+  .featured-project { box-shadow: var(--shadow-low); }
+  .featured-project::before {
+    background: radial-gradient(ellipse at center,color-mix(in srgb,var(--color-art) 18%,transparent),transparent 70%);
+    filter: none;
+    opacity: 1;
+  }
+  .architecture-trace circle,.kafka-flow-signal { filter: none; }
+  .mobile-navigation { overscroll-behavior: contain; }
 }
 
 @media (max-width: 639px) {

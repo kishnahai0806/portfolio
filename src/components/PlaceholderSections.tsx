@@ -112,7 +112,8 @@ function ProjectLinks({ project }: { project: Project }) {
 }
 
 function ArchitectureLayers() {
-  const { reduceMotion } = useMotionPreferences();
+  const { reduceMotion, allowScrollMotion } = useMotionPreferences();
+  const scrollMotion = !reduceMotion && allowScrollMotion;
 
   return (
     <div
@@ -127,7 +128,7 @@ function ArchitectureLayers() {
 
       <motion.div
         className="architecture-layers"
-        initial={reduceMotion ? false : "hidden"}
+        initial={scrollMotion ? "hidden" : "visible"}
         whileInView="visible"
         viewport={{ once: true, amount: 0.45 }}
         variants={{
@@ -138,7 +139,7 @@ function ArchitectureLayers() {
       >
         <svg className="architecture-trace" viewBox="0 0 48 320" preserveAspectRatio="none">
           <path d="M24 20 L24 300" />
-          {!reduceMotion && (
+          {scrollMotion && (
             <motion.circle
               cx="24"
               cy="32"
@@ -207,7 +208,8 @@ function FeaturedProject() {
 }
 
 function KafkaLinework() {
-  const { reduceMotion } = useMotionPreferences();
+  const { reduceMotion, allowScrollMotion } = useMotionPreferences();
+  const scrollMotion = !reduceMotion && allowScrollMotion;
 
   return (
     <div
@@ -240,7 +242,7 @@ function KafkaLinework() {
           <path className="kafka-flow-route kafka-flow-route-inbound" d="M648 124 H72" />
           <circle className="kafka-flow-junction" cx="360" cy="56" r="4" />
           <circle className="kafka-flow-junction" cx="360" cy="124" r="4" />
-          {!reduceMotion && (
+          {scrollMotion && (
             <>
               <motion.circle
                 className="kafka-flow-signal kafka-flow-signal-outbound"
@@ -352,7 +354,8 @@ function EventDrivenProject() {
 }
 
 function SchoolemSignal() {
-  const { reduceMotion } = useMotionPreferences();
+  const { reduceMotion, allowScrollMotion } = useMotionPreferences();
+  const scrollMotion = !reduceMotion && allowScrollMotion;
 
   return (
     <div
@@ -370,10 +373,10 @@ function SchoolemSignal() {
           <motion.div
             key={label}
             className="schoolem-signal-node"
-            initial={reduceMotion ? false : { opacity: 0, y: 8 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={scrollMotion ? { opacity: 0, y: 8 } : false}
+            whileInView={scrollMotion ? { opacity: 1, y: 0 } : undefined}
             viewport={{ once: true, amount: 0.65 }}
-            transition={{ duration: 0.45, delay: reduceMotion ? 0 : index * 0.08, ease: premiumEase }}
+            transition={{ duration: 0.45, delay: scrollMotion ? index * 0.08 : 0, ease: premiumEase }}
           >
             <span>0{index + 1}</span>
             <strong>{label}</strong>
@@ -386,7 +389,8 @@ function SchoolemSignal() {
 }
 
 function SteelWorksQuality() {
-  const { reduceMotion } = useMotionPreferences();
+  const { reduceMotion, allowScrollMotion } = useMotionPreferences();
+  const scrollMotion = !reduceMotion && allowScrollMotion;
 
   return (
     <div
@@ -403,10 +407,10 @@ function SteelWorksQuality() {
           <motion.div
             key={label}
             className="steelworks-quality-step"
-            initial={reduceMotion ? false : { opacity: 0, x: -8 }}
-            whileInView={{ opacity: 1, x: 0 }}
+            initial={scrollMotion ? { opacity: 0, x: -8 } : false}
+            whileInView={scrollMotion ? { opacity: 1, x: 0 } : undefined}
             viewport={{ once: true, amount: 0.65 }}
-            transition={{ duration: 0.45, delay: reduceMotion ? 0 : index * 0.07, ease: premiumEase }}
+            transition={{ duration: 0.45, delay: scrollMotion ? index * 0.07 : 0, ease: premiumEase }}
           >
             <i />
             <span>{label}</span>
