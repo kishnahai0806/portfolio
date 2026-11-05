@@ -352,33 +352,58 @@ function EventDrivenProject() {
 function SchoolemSignal() {
   const { reduceMotion, allowScrollMotion } = useMotionPreferences();
   const scrollMotion = !reduceMotion && allowScrollMotion;
+  const renderNode = (key: string, index: number, label: string, detail: string, delay: number) => (
+    <motion.div
+      key={key}
+      className={`schoolem-flow-node schoolem-flow-node-${key}`}
+      initial={scrollMotion ? { opacity: 0, y: 8 } : false}
+      whileInView={scrollMotion ? { opacity: 1, y: 0 } : undefined}
+      viewport={{ once: true, amount: 0.65 }}
+      transition={{ duration: 0.45, delay: scrollMotion ? delay : 0, ease: premiumEase }}
+    >
+      <span>0{index + 1}</span>
+      <div>
+        <strong>{label}</strong>
+        <small>{detail}</small>
+      </div>
+    </motion.div>
+  );
 
   return (
     <div
       className="supporting-visual schoolem-signal"
       role="img"
-      aria-label="Schoolem messaging service saves a message, then publishes a Supabase Realtime event and notification after the database transaction commits."
+      aria-label="Schoolem messaging service saves a message in the database. After the transaction commits, it publishes a Supabase Realtime event and sends a notification."
     >
       <div className="schoolem-signal-track" aria-hidden="true">
-        {[
-          ["Messaging", "Spring Boot"],
-          ["Saved", "Database"],
-          ["Realtime", "Supabase"],
-          ["Notify", "After commit"],
-        ].map(([label, detail], index) => (
-          <motion.div
-            key={label}
-            className="schoolem-signal-node"
-            initial={scrollMotion ? { opacity: 0, y: 8 } : false}
-            whileInView={scrollMotion ? { opacity: 1, y: 0 } : undefined}
+        {renderNode("message", 0, "Message", "Spring Boot", 0)}
+
+        <div className="schoolem-flow-link">
+          <motion.span
+            initial={scrollMotion ? { opacity: 0, scaleX: 0 } : false}
+            whileInView={scrollMotion ? { opacity: 1, scaleX: 1 } : undefined}
             viewport={{ once: true, amount: 0.65 }}
-            transition={{ duration: 0.45, delay: scrollMotion ? index * 0.08 : 0, ease: premiumEase }}
-          >
-            <span>0{index + 1}</span>
-            <strong>{label}</strong>
-            <small>{detail}</small>
-          </motion.div>
-        ))}
+            transition={{ duration: 0.5, delay: scrollMotion ? 0.1 : 0, ease: premiumEase }}
+          />
+        </div>
+
+        {renderNode("commit", 1, "Commit", "Database", 0.16)}
+
+        <motion.div
+          className="schoolem-flow-branch"
+          initial={scrollMotion ? { opacity: 0, scaleX: 0.5 } : false}
+          whileInView={scrollMotion ? { opacity: 1, scaleX: 1 } : undefined}
+          viewport={{ once: true, amount: 0.65 }}
+          transition={{ duration: 0.5, delay: scrollMotion ? 0.26 : 0, ease: premiumEase }}
+        >
+          <span />
+          <span />
+        </motion.div>
+
+        <div className="schoolem-flow-outputs">
+          {renderNode("realtime", 2, "Realtime", "Supabase", 0.34)}
+          {renderNode("notify", 3, "Notify", "After commit", 0.4)}
+        </div>
       </div>
     </div>
   );
