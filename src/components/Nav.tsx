@@ -12,6 +12,8 @@ export default function Nav() {
   const [open, setOpen] = useState(false);
   const [activeHref, setActiveHref] = useState("#home");
   const [theme, setTheme] = useState<Theme>(readTheme);
+  const menuRef = useRef<HTMLElement>(null);
+  const toggleRef = useRef<HTMLButtonElement>(null);
   const visibilityRef = useRef(new Map<string, number>());
   const nextTheme = theme === "dark" ? "light" : "dark";
 
@@ -52,10 +54,36 @@ export default function Nav() {
 
   useEffect(() => {
     if (!open) return;
-    const close = (event: KeyboardEvent) => event.key === "Escape" && setOpen(false);
-    window.addEventListener("keydown", close);
-    return () => window.removeEventListener("keydown", close);
+
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key !== "Escape") return;
+      setOpen(false);
+      toggleRef.current?.focus();
+    };
+    const closeOnOutsidePress = (event: PointerEvent) => {
+      const target = event.target as Node;
+      if (menuRef.current?.contains(target) || toggleRef.current?.contains(target)) return;
+      setOpen(false);
+    };
+
+    window.addEventListener("keydown", closeOnEscape);
+    window.addEventListener("pointerdown", closeOnOutsidePress);
+    return () => {
+      window.removeEventListener("keydown", closeOnEscape);
+      window.removeEventListener("pointerdown", closeOnOutsidePress);
+    };
   }, [open]);
+
+  useEffect(() => {
+    const desktopNavigation = window.matchMedia("(min-width: 1024px)");
+    const closeAtDesktop = (event: MediaQueryListEvent) => {
+      if (event.matches) setOpen(false);
+    };
+
+    if (desktopNavigation.matches) setOpen(false);
+    desktopNavigation.addEventListener("change", closeAtDesktop);
+    return () => desktopNavigation.removeEventListener("change", closeAtDesktop);
+  }, []);
 
   return (
     <header className="fixed inset-x-0 top-0 z-50 px-4 pt-4 sm:px-6">
@@ -101,9 +129,10 @@ export default function Nav() {
             Email me
           </a>
           <button
+            ref={toggleRef}
             type="button"
             onClick={() => setOpen((value) => !value)}
-            className="grid h-9 w-9 place-items-center rounded-full border border-line text-ink lg:hidden"
+            className="mobile-menu-toggle lg:hidden"
             aria-expanded={open}
             aria-controls="mobile-navigation"
             aria-label={open ? "Close navigation" : "Open navigation"}
@@ -115,15 +144,35 @@ export default function Nav() {
 
       {open && (
         <nav
+          ref={menuRef}
           id="mobile-navigation"
-          className="mobile-navigation fixed inset-x-4 bottom-4 top-20 overflow-y-auto rounded-3xl border border-line bg-panel p-3 shadow-2xl"
+          className="mobile-navigation"
           aria-label="Mobile navigation"
         >
-          {nav.map((item, index) => (
-            <a key={item.href} href={item.href} onClick={() => { setActiveHref(item.href); setOpen(false); }} className="flex min-h-14 items-center justify-between border-b border-line px-4 py-4 text-lg font-medium text-ink last:border-0">
-              <span><span className="mr-3 font-mono text-xs text-amber">0{index + 1}</span>{item.label}</span><span aria-hidden="true">/</span>
-            </a>
-          ))}
+          <div className="mobile-navigation-heading">
+            <span>Menu</span>
+          </div>
+          <div className="mobile-navigation-grid">
+            {nav.map((item) => {
+              const active = activeHref === item.href;
+              return (
+                <a
+                  key={item.href}
+                  href={item.href}
+                  onClick={() => { setActiveHref(item.href); setOpen(false); }}
+                  className={`mobile-navigation-link ${active ? "mobile-navigation-link-active" : ""}`}
+                  aria-current={active ? "page" : undefined}
+                >
+                  <strong>{item.label}</strong>
+                  <span aria-hidden="true" />
+                </a>
+              );
+            })}
+          </div>
+          <div className="mobile-navigation-actions">
+            <a href={`mailto:${site.email}`}>Email me</a>
+            <a href={site.resumeUrl} download={site.resumeFilename}>Résumé</a>
+          </div>
         </nav>
       )}
     </header>
