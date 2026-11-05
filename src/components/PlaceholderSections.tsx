@@ -512,32 +512,53 @@ function ProjectGallery() {
             const evidence = project.metrics[0];
 
             return (
-              <button
+              <motion.div
                 key={project.id}
-                ref={(node) => { tabRefs.current[index] = node; }}
-                id={`project-tab-${project.id}`}
-                type="button"
-                role="tab"
-                className={`project-selector ${selected ? "project-selector-selected" : ""}`}
-                aria-selected={selected}
-                aria-controls={`project-panel-${project.id}`}
-                tabIndex={selected ? 0 : -1}
-                onClick={() => selectProject(index)}
-                onKeyDown={(event) => handleTabKeyDown(event, index)}
+                className="project-selector-shell"
+                role="presentation"
+                initial={panelMotion ? { opacity: 0, y: 12 } : false}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.45 }}
+                transition={{
+                  duration: reduceMotion ? 0.2 : 0.5,
+                  delay: panelMotion ? index * 0.06 : 0,
+                  ease: premiumEase,
+                }}
               >
-                <span className="project-selector-topline">
-                  <span>0{index + 1}</span>
-                  <span>{selected ? "Selected" : "View project"}</span>
-                </span>
-                <strong>{project.name}</strong>
-                <span className="project-selector-summary">{project.oneLiner}</span>
-                {evidence && (
-                  <span className="project-selector-evidence">
-                    <span>{evidence.label.replaceAll("_", " ")}</span>
-                    <strong>{evidence.value}</strong>
+                <button
+                  ref={(node) => { tabRefs.current[index] = node; }}
+                  id={`project-tab-${project.id}`}
+                  type="button"
+                  role="tab"
+                  className={`project-selector ${selected ? "project-selector-selected" : ""}`}
+                  aria-selected={selected}
+                  aria-controls={`project-panel-${project.id}`}
+                  tabIndex={selected ? 0 : -1}
+                  onClick={() => selectProject(index)}
+                  onKeyDown={(event) => handleTabKeyDown(event, index)}
+                >
+                  {selected && (
+                    <motion.span
+                      className="project-selector-selection"
+                      layoutId="project-selector-selection"
+                      transition={{ duration: reduceMotion ? 0.01 : 0.5, ease: premiumEase }}
+                      aria-hidden="true"
+                    />
+                  )}
+                  <span className="project-selector-topline">
+                    <span>0{index + 1}</span>
+                    <span>{selected ? "Selected" : "View project"}</span>
                   </span>
-                )}
-              </button>
+                  <strong>{project.name}</strong>
+                  <span className="project-selector-summary">{project.oneLiner}</span>
+                  {evidence && (
+                    <span className="project-selector-evidence">
+                      <span>{evidence.label.replaceAll("_", " ")}</span>
+                      <strong>{evidence.value}</strong>
+                    </span>
+                  )}
+                </button>
+              </motion.div>
             );
           })}
         </div>
