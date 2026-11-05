@@ -1167,10 +1167,10 @@ html[data-theme="light"] .cinematic-hero {
   position: absolute;
   inset: 0;
   display: grid;
-  grid-template-columns: minmax(4.5rem,.9fr) 2rem minmax(4.5rem,.9fr) 3rem minmax(6rem,1.1fr);
+  grid-template-columns: minmax(4.5rem,.9fr) 2.5rem minmax(4.5rem,.9fr) 2.5rem minmax(6rem,1.1fr);
   grid-template-areas: "message link commit branch outputs";
   align-items: center;
-  gap: .5rem;
+  gap: .75rem;
   padding: 1rem;
 }
 .schoolem-flow-node {
@@ -1351,6 +1351,43 @@ html[data-theme="light"] .cinematic-hero {
 @media (max-width: 1023px) {
   .profile-stack-layout { gap: 3rem; }
   .core-stack-panel { padding: 1.5rem; }
+  .supporting-project .schoolem-signal { min-height: 14rem; }
+  .schoolem-signal-track {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "message"
+      "link"
+      "commit"
+      "branch"
+      "outputs";
+    grid-template-rows: auto 1.5rem auto 2.5rem auto;
+    align-content: center;
+    gap: 0;
+    padding: 1rem 1.25rem;
+  }
+  .schoolem-flow-node-message,
+  .schoolem-flow-node-commit {
+    grid-template-columns: minmax(0,1fr) 1.25rem minmax(0,1fr);
+    column-gap: .75rem;
+  }
+  .schoolem-flow-node-message > span,
+  .schoolem-flow-node-commit > span { grid-column: 2; }
+  .schoolem-flow-node-message > div,
+  .schoolem-flow-node-commit > div { grid-column: 3; justify-items: start; }
+  .schoolem-flow-link { width: 1.25rem; height: 1.5rem; justify-self: center; margin-left: 0; }
+  .schoolem-flow-link::before,
+  .schoolem-flow-link > span { top: 0; right: auto; bottom: .35rem; left: 50%; width: 1px; height: auto; transform-origin: center top; }
+  .schoolem-flow-link::after { top: auto; right: auto; bottom: 0; left: 50%; transform: translateX(-50%) rotate(90deg); }
+  .schoolem-flow-branch { width: 100%; height: 2.5rem; transform-origin: center top; }
+  .schoolem-flow-branch::before { top: 0; left: 50%; width: 1px; height: 50%; }
+  .schoolem-flow-branch::after { top: 50%; right: 25%; bottom: auto; left: 25%; width: auto; height: 1px; }
+  .schoolem-flow-branch > span { top: 50%; bottom: .35rem; width: 1px; height: auto; }
+  .schoolem-flow-branch > span:first-child { top: 50%; right: auto; left: 25%; }
+  .schoolem-flow-branch > span:last-child { top: 50%; right: auto; left: 75%; }
+  .schoolem-flow-branch > span::after { top: auto; right: auto; bottom: -.35rem; left: 50%; transform: translateX(-50%) rotate(90deg); }
+  .schoolem-flow-outputs { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 1rem; }
+  .schoolem-flow-outputs .schoolem-flow-node { grid-template-columns: 1fr; justify-items: center; gap: .35rem; text-align: center; }
+  .schoolem-flow-outputs .schoolem-flow-node > div { justify-items: center; }
 }
 
 @media (max-width: 639px) {
@@ -1366,34 +1403,6 @@ html[data-theme="light"] .cinematic-hero {
   #experience .section-title { font-size: 2.25rem; line-height: 2.5rem; }
   .supporting-project { padding: 1.5rem; }
   .supporting-visual { min-height: 11rem; }
-  .supporting-project .schoolem-signal { min-height: 14rem; }
-  .schoolem-signal-track {
-    grid-template-columns: 1fr;
-    grid-template-areas:
-      "message"
-      "link"
-      "commit"
-      "branch"
-      "outputs";
-    grid-template-rows: auto 1.5rem auto 2.5rem auto;
-    align-content: center;
-    gap: 0;
-    padding: 1rem 1.25rem;
-  }
-  .schoolem-flow-link { width: 1.25rem; height: 1.5rem; margin-left: .625rem; }
-  .schoolem-flow-link::before,
-  .schoolem-flow-link > span { top: 0; right: auto; bottom: .35rem; left: 50%; width: 1px; height: auto; transform-origin: center top; }
-  .schoolem-flow-link::after { top: auto; right: auto; bottom: 0; left: 50%; transform: translateX(-50%) rotate(90deg); }
-  .schoolem-flow-branch { width: 100%; height: 2.5rem; transform-origin: center top; }
-  .schoolem-flow-branch::before { top: 0; left: 50%; width: 1px; height: 50%; }
-  .schoolem-flow-branch::after { top: 50%; right: 25%; bottom: auto; left: 25%; width: auto; height: 1px; }
-  .schoolem-flow-branch > span { top: 50%; bottom: .35rem; width: 1px; height: auto; }
-  .schoolem-flow-branch > span:first-child { top: 50%; right: auto; left: 25%; }
-  .schoolem-flow-branch > span:last-child { top: 50%; right: auto; left: 75%; }
-  .schoolem-flow-branch > span::after { top: auto; right: auto; bottom: -.35rem; left: 50%; transform: translateX(-50%) rotate(90deg); }
-  .schoolem-flow-outputs { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 1rem; }
-  .schoolem-flow-outputs .schoolem-flow-node { grid-template-columns: 1fr; justify-items: center; gap: .35rem; text-align: center; }
-  .schoolem-flow-outputs .schoolem-flow-node > div { justify-items: center; }
   .core-stack-panel { border-radius: 1rem; padding: 1.5rem; }
   .core-stack-heading h3 { font-size: 1.875rem; line-height: 2.25rem; }
   .core-skills { grid-template-columns: 1fr; }
