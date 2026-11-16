@@ -1,6 +1,6 @@
 import { FaGithub, FaLinkedinIn } from "react-icons/fa6";
 import { AnimatePresence, motion } from "framer-motion";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { AnchorHTMLAttributes, KeyboardEvent, ReactNode } from "react";
 import { about, aiSupportFlow, education, experience, issueTrackerArchitecture, projects, site, skills } from "../content";
 import type { Project } from "../content";
@@ -11,6 +11,17 @@ import { useMotionPreferences } from "./motion/MotionPreferences";
 import { premiumEase } from "./motion/motionPresets";
 
 const [issueTracker, aiSupport, schoolem, steelworks] = projects;
+const projectHashPrefix = "#projects/";
+
+function projectIndexFromHash() {
+  if (typeof window === "undefined" || !window.location.hash.startsWith(projectHashPrefix)) return -1;
+  try {
+    const projectId = decodeURIComponent(window.location.hash.slice(projectHashPrefix.length));
+    return projects.findIndex((project) => project.id === projectId);
+  } catch {
+    return -1;
+  }
+}
 
 const socialLinks = [
   { label: "GitHub", href: site.github, Icon: FaGithub },
@@ -485,14 +496,40 @@ function SupportingProject({ project, variant }: { project: Project; variant: "s
 }
 
 function ProjectGallery() {
-  const [selectedIndex, setSelectedIndex] = useState(0);
+  const initialProjectIndex = projectIndexFromHash();
+  const [selectedIndex, setSelectedIndex] = useState(initialProjectIndex >= 0 ? initialProjectIndex : 0);
   const tabRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const { reduceMotion, allowScrollMotion } = useMotionPreferences();
   const selectedProject = projects[selectedIndex];
   const panelMotion = !reduceMotion && allowScrollMotion;
 
+  useEffect(() => {
+    const syncProjectFromHash = () => {
+      const index = projectIndexFromHash();
+      if (index < 0) return;
+      setSelectedIndex(index);
+      window.requestAnimationFrame(() => {
+        document.querySelector("#projects")?.scrollIntoView({ block: "start" });
+        const tab = tabRefs.current[index];
+        const list = tab?.closest<HTMLElement>(".project-gallery-index");
+        const item = tab?.closest<HTMLElement>(".project-selector-shell");
+        if (list && item) {
+          list.scrollTo({
+            left: item.offsetLeft - (list.clientWidth - item.clientWidth) / 2,
+            behavior: "auto",
+          });
+        }
+      });
+    };
+
+    window.addEventListener("hashchange", syncProjectFromHash);
+    syncProjectFromHash();
+    return () => window.removeEventListener("hashchange", syncProjectFromHash);
+  }, []);
+
   const selectProject = (index: number, moveFocus = false) => {
     setSelectedIndex(index);
+    window.history.replaceState(null, "", `${projectHashPrefix}${encodeURIComponent(projects[index].id)}`);
     if (moveFocus) tabRefs.current[index]?.focus();
   };
 
@@ -534,7 +571,9 @@ function ProjectGallery() {
         <div className="project-gallery-index" role="tablist" aria-label="Selected software projects">
           {projects.map((project, index) => {
             const selected = selectedIndex === index;
-            const evidence = project.metrics[0];
+            const evidence = project.id === steelworks.id
+              ? { label: "testing", value: "pytest + Playwright" }
+              : project.metrics[0];
 
             return (
               <motion.div

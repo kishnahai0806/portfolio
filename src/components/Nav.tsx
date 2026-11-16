@@ -11,6 +11,7 @@ function readTheme(): Theme {
 export default function Nav() {
   const [open, setOpen] = useState(false);
   const [activeHref, setActiveHref] = useState("#home");
+  const [overHero, setOverHero] = useState(true);
   const [theme, setTheme] = useState<Theme>(readTheme);
   const menuRef = useRef<HTMLElement>(null);
   const toggleRef = useRef<HTMLButtonElement>(null);
@@ -22,6 +23,18 @@ export default function Nav() {
     localStorage.setItem("krish-theme", theme);
     document.querySelector('meta[name="theme-color"]')?.setAttribute("content", theme === "light" ? "#ece9e1" : "#080908");
   }, [theme]);
+
+  useEffect(() => {
+    const hero = document.querySelector<HTMLElement>("#home");
+    if (!hero) return;
+
+    const observer = new IntersectionObserver(([entry]) => {
+      setOverHero(entry.isIntersecting);
+    }, { rootMargin: "0px 0px -82%", threshold: 0 });
+
+    observer.observe(hero);
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     const sections = nav
@@ -86,7 +99,7 @@ export default function Nav() {
   }, []);
 
   return (
-    <header className="fixed inset-x-0 top-0 z-50 px-4 pt-4 sm:px-6">
+    <header className={`site-header fixed inset-x-0 top-0 z-50 px-4 pt-4 sm:px-6 ${overHero ? "site-header-on-hero" : ""}`}>
       <nav className="nav-shell mx-auto flex h-14 max-w-[88rem] items-center justify-between rounded-full border border-line/90 bg-bg/80 px-3 shadow-2xl shadow-black/20 backdrop-blur-xl sm:px-5" aria-label="Primary navigation">
         <a href="#home" className="group flex items-center gap-3 rounded-full" aria-label={`${site.name}, home`}>
           <span className="grid h-8 w-8 place-items-center rounded-full bg-amber font-mono text-[11px] font-bold text-bg transition-transform group-hover:rotate-6">KP</span>

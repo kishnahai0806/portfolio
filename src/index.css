@@ -145,7 +145,7 @@ body {
   color: var(--color-ink);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
-  transition: background-color .35s ease, color .35s ease;
+  transition: background-color .35s cubic-bezier(.22,1,.36,1), color .35s cubic-bezier(.22,1,.36,1);
 }
 button, a { -webkit-tap-highlight-color: transparent; }
 a { text-decoration: none; }
@@ -187,6 +187,20 @@ a { text-decoration: none; }
 
 /* Navigation */
 .nav-shell { box-shadow: inset 0 1px 0 rgba(255,255,255,0.035), 0 18px 55px rgba(0,0,0,0.25); }
+.site-header-on-hero {
+  --color-bg: #080f17;
+  --color-panel: #101927;
+  --color-line: #334155;
+  --color-ink: #f8fafc;
+  --color-mut: #cbd5e1;
+  --color-dim: #94a3b8;
+  --color-amber: #75b8ba;
+  --color-art: #75b8ba;
+}
+.site-header-on-hero .nav-shell {
+  background: color-mix(in srgb,var(--color-panel) 74%,transparent);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.08),0 18px 55px rgba(0,0,0,.28);
+}
 .theme-toggle, .back-to-top {
   display: grid;
   place-items: center;
@@ -1551,6 +1565,7 @@ html[data-theme="light"] .cinematic-hero {
 }
 .project-selector-evidence > span { text-transform: lowercase; }
 .project-selector-evidence > strong { color: var(--color-ink); font-size: 1.25rem; font-weight: 600; font-variant-numeric: tabular-nums; }
+.project-selector-evidence > strong { min-width: 0; text-align: right; overflow-wrap: anywhere; }
 .project-selector-selected .project-selector-evidence > strong { color: var(--color-art); }
 .project-stage { min-width: 0; border-top: 1px solid color-mix(in srgb,var(--color-art) 58%,var(--color-line)); }
 .project-stage-heading {
@@ -1857,8 +1872,8 @@ html[data-theme="light"] .cinematic-hero {
     gap: .75rem;
     overflow-x: auto;
     overscroll-behavior-inline: contain;
-    padding: .25rem .25rem 1rem;
-    scroll-padding-inline: .25rem;
+    padding: .25rem 3.5rem 1rem 1rem;
+    scroll-padding-inline: 1rem 3.5rem;
     scroll-snap-type: inline mandatory;
     scrollbar-width: none;
     touch-action: pan-x pan-y;
@@ -1900,4 +1915,23 @@ html[data-theme="light"] .cinematic-hero {
   .experience-list article { grid-template-columns: 1fr; }
   .contact-email { overflow-wrap: anywhere; font-size: 1.5rem; line-height: 2rem; }
   .palette-lab { display: none; }
+}
+
+/* Focused portfolio polish */
+#experience.section-frame { padding-block: 6rem; }
+.experience-layout-education-first { gap: 4rem; }
+.experience-list article { padding-block: 1rem; }
+.experience-list .experience-detail { max-width: 38rem; margin-top: .75rem; }
+.education-card > h3 { margin-top: 2rem; font-size: 2.25rem; line-height: 2.5rem; }
+
+@media (max-width: 639px) {
+  #experience.section-frame { padding-block: 5rem; }
+  .experience-layout-education-first { gap: 3rem; }
+  .contact-email {
+    min-width: 0;
+    font-size: 1.125rem;
+    line-height: 1.75rem;
+    letter-spacing: -.025em;
+    overflow-wrap: anywhere;
+  }
 }
