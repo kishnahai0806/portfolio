@@ -12,7 +12,7 @@ type PaletteId = (typeof palettes)[number]["id"];
 
 function readPalette(): PaletteId {
   const saved = localStorage.getItem("krish-palette-v2");
-  return palettes.some((palette) => palette.id === saved) ? saved as PaletteId : "deep";
+  return palettes.some((palette) => palette.id === saved) ? saved as PaletteId : "baseline";
 }
 
 export default function PaletteLab() {

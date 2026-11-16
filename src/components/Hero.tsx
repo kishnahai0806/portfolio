@@ -32,8 +32,8 @@ export default function Hero() {
 
           <StaggerItem preset="hero" distance={24}>
             <h1 id="hero-heading" className="cinematic-title">
-              <span>{site.title}</span>
-              <span>across the stack.</span>
+              <span>{site.title}.</span>{" "}
+              <span>Backend focused.</span>
             </h1>
           </StaggerItem>
 

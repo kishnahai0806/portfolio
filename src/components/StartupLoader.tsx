@@ -8,14 +8,37 @@ import { premiumEase } from "./motion/motionPresets";
 type StartupPhase = "loading" | "welcome" | "expanding" | "complete";
 
 const startupPhrases = [site.title, "Full stack systems"];
+const introSessionKey = "krish-intro-seen-v1";
+
+function shouldSkipIntro(reduceMotion: boolean) {
+  if (reduceMotion || typeof window === "undefined") return true;
+  if (window.location.hash && window.location.hash !== "#home") return true;
+  try {
+    return window.sessionStorage.getItem(introSessionKey) === "1";
+  } catch {
+    return false;
+  }
+}
 
 export default function StartupLoader({ children }: { children: ReactNode }) {
   const { reduceMotion } = useMotionPreferences();
-  const [phase, setPhase] = useState<StartupPhase>(reduceMotion ? "complete" : "loading");
-  const [progress, setProgress] = useState(reduceMotion ? 100 : 0);
+  const skipIntro = shouldSkipIntro(reduceMotion);
+  const [phase, setPhase] = useState<StartupPhase>(skipIntro ? "complete" : "loading");
+  const [progress, setProgress] = useState(skipIntro ? 100 : 0);
   const frameRef = useRef<number | null>(null);
-  const finishedRef = useRef(reduceMotion);
-  const lastProgressRef = useRef(reduceMotion ? 100 : 0);
+  const skipButtonRef = useRef<HTMLButtonElement>(null);
+  const introWasShownRef = useRef(!skipIntro);
+  const finishedRef = useRef(skipIntro);
+  const lastProgressRef = useRef(skipIntro ? 100 : 0);
+
+  useEffect(() => {
+    if (!skipIntro) return;
+    try {
+      window.sessionStorage.setItem(introSessionKey, "1");
+    } catch {
+      // Storage may be unavailable in privacy-restricted contexts.
+    }
+  }, [skipIntro]);
 
   const finish = useCallback(() => {
     if (finishedRef.current) return;
@@ -23,6 +46,11 @@ export default function StartupLoader({ children }: { children: ReactNode }) {
     if (frameRef.current !== null) {
       window.cancelAnimationFrame(frameRef.current);
       frameRef.current = null;
+    }
+    try {
+      window.sessionStorage.setItem(introSessionKey, "1");
+    } catch {
+      // Storage may be unavailable in privacy-restricted contexts.
     }
     setPhase("complete");
   }, []);
@@ -74,19 +102,31 @@ export default function StartupLoader({ children }: { children: ReactNode }) {
     const previousOverflow = document.body.style.overflow;
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") finish();
+      if (event.key === "Tab") {
+        event.preventDefault();
+        skipButtonRef.current?.focus();
+      }
     };
 
     document.body.style.overflow = "hidden";
+    const focusFrame = window.requestAnimationFrame(() => skipButtonRef.current?.focus());
     window.addEventListener("keydown", handleKeyDown);
     return () => {
+      window.cancelAnimationFrame(focusFrame);
       document.body.style.overflow = previousOverflow;
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, [finish, phase]);
 
+  useEffect(() => {
+    if (phase !== "complete" || !introWasShownRef.current) return;
+    document.querySelector<HTMLElement>("#main")?.focus({ preventScroll: true });
+    introWasShownRef.current = false;
+  }, [phase]);
+
   return (
     <>
-      <div className="site-shell" aria-hidden={phase !== "complete"}>
+      <div className="site-shell" aria-hidden={phase !== "complete"} inert={phase !== "complete"}>
         {children}
       </div>
 
@@ -108,6 +148,7 @@ export default function StartupLoader({ children }: { children: ReactNode }) {
               <div className="absolute inset-x-5 top-5 flex items-center justify-between font-mono text-[10px] font-semibold uppercase tracking-[0.2em] text-loader-ink sm:inset-x-10 sm:top-8">
                 <span>KP / 2026</span>
                 <button
+                  ref={skipButtonRef}
                   type="button"
                   onClick={finish}
                   className="rounded-full border border-loader-ink/25 px-4 py-2 transition-colors hover:border-loader-ink"

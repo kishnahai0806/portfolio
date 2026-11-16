@@ -7,7 +7,7 @@ export const site = {
   name: "Krish Prajapati",
   title: "Software Engineer",
   tagline:
-    "I build software across the stack, with most of my experience on the backend. I work on the interface, the API, the data behind it, and the tests that keep it working.",
+    "I build software across the stack, with my strongest experience in Java backend systems. I work on the interface, the API, the data behind it, and the tests that keep it working.",
   email: "kprajapati0806@gmail.com",
   github: "https://github.com/kishnahai0806",
   linkedin: "https://www.linkedin.com/in/krish-prajapati-swe",
