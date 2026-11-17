@@ -502,8 +502,6 @@ function ProjectGallery() {
   const galleryIndexRef = useRef<HTMLDivElement | null>(null);
   const tabRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const selectedIndexRef = useRef(selectedIndex);
-  const navigationTargetRef = useRef<number | null>(null);
-  const scrollFrameRef = useRef<number | null>(null);
   const { reduceMotion, allowScrollMotion } = useMotionPreferences();
   const selectedProject = projects[selectedIndex];
   const panelMotion = !reduceMotion && allowScrollMotion;
@@ -555,51 +553,14 @@ function ProjectGallery() {
     return () => window.removeEventListener("hashchange", syncProjectFromHash);
   }, []);
 
-  useEffect(() => () => {
-    if (scrollFrameRef.current !== null) window.cancelAnimationFrame(scrollFrameRef.current);
-  }, []);
-
   const selectProject = (index: number, moveFocus = false) => {
     updateProjectSelection(index, moveFocus);
   };
 
   const navigateProject = (index: number) => {
     if (index < 0 || index >= projects.length) return;
-    navigationTargetRef.current = index;
     updateProjectSelection(index);
     scrollProjectIntoView(index, reduceMotion ? "auto" : "smooth");
-  };
-
-  const handleGalleryScroll = () => {
-    if (scrollFrameRef.current !== null) return;
-
-    scrollFrameRef.current = window.requestAnimationFrame(() => {
-      scrollFrameRef.current = null;
-      const list = galleryIndexRef.current;
-      if (!list || window.matchMedia("(min-width: 640px)").matches) return;
-
-      const viewportCenter = list.scrollLeft + list.clientWidth / 2;
-      let closestIndex = selectedIndexRef.current;
-      let closestDistance = Number.POSITIVE_INFINITY;
-
-      tabRefs.current.forEach((tab, index) => {
-        const item = tab?.closest<HTMLElement>(".project-selector-shell");
-        if (!item) return;
-        const itemCenter = item.offsetLeft + item.clientWidth / 2;
-        const distance = Math.abs(itemCenter - viewportCenter);
-        if (distance < closestDistance) {
-          closestDistance = distance;
-          closestIndex = index;
-        }
-      });
-
-      if (navigationTargetRef.current !== null) {
-        if (closestIndex === navigationTargetRef.current) navigationTargetRef.current = null;
-        return;
-      }
-
-      updateProjectSelection(closestIndex);
-    });
   };
 
   const handleTabKeyDown = (event: KeyboardEvent<HTMLButtonElement>, index: number) => {
@@ -668,8 +629,6 @@ function ProjectGallery() {
           className="project-gallery-index"
           role="tablist"
           aria-label="Selected software projects"
-          onPointerDown={() => { navigationTargetRef.current = null; }}
-          onScroll={handleGalleryScroll}
         >
           {projects.map((project, index) => {
             const selected = selectedIndex === index;
