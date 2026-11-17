@@ -611,7 +611,6 @@ function ProjectGallery() {
                   )}
                   <span className="project-selector-topline">
                     <span>0{index + 1}</span>
-                    <span>{selected ? "Selected" : "View project"}</span>
                   </span>
                   <strong>{project.name}</strong>
                   <span className="project-selector-summary">{project.oneLiner}</span>
@@ -629,7 +628,6 @@ function ProjectGallery() {
 
         <div className="project-stage">
           <div className="project-stage-heading" aria-hidden="true">
-            <span>Selected case study</span>
             <span>0{selectedIndex + 1} / 0{projects.length}</span>
           </div>
           <AnimatePresence mode="wait" initial={false}>
