@@ -1,4 +1,5 @@
 import { FaGithub, FaLinkedinIn } from "react-icons/fa6";
+import { PiArrowLeft, PiArrowRight } from "react-icons/pi";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import type { AnchorHTMLAttributes, KeyboardEvent, ReactNode } from "react";
@@ -498,15 +499,42 @@ function SupportingProject({ project, variant }: { project: Project; variant: "s
 function ProjectGallery() {
   const initialProjectIndex = projectIndexFromHash();
   const [selectedIndex, setSelectedIndex] = useState(initialProjectIndex >= 0 ? initialProjectIndex : 0);
+  const galleryIndexRef = useRef<HTMLDivElement | null>(null);
   const tabRefs = useRef<Array<HTMLButtonElement | null>>([]);
+  const selectedIndexRef = useRef(selectedIndex);
+  const navigationTargetRef = useRef<number | null>(null);
+  const scrollFrameRef = useRef<number | null>(null);
   const { reduceMotion, allowScrollMotion } = useMotionPreferences();
   const selectedProject = projects[selectedIndex];
   const panelMotion = !reduceMotion && allowScrollMotion;
+
+  const updateProjectSelection = (index: number, moveFocus = false) => {
+    if (selectedIndexRef.current !== index) {
+      selectedIndexRef.current = index;
+      setSelectedIndex(index);
+    }
+
+    const nextHash = `${projectHashPrefix}${encodeURIComponent(projects[index].id)}`;
+    if (window.location.hash !== nextHash) window.history.replaceState(null, "", nextHash);
+    if (moveFocus) tabRefs.current[index]?.focus();
+  };
+
+  const scrollProjectIntoView = (index: number, behavior: ScrollBehavior) => {
+    const list = galleryIndexRef.current;
+    const item = tabRefs.current[index]?.closest<HTMLElement>(".project-selector-shell");
+    if (!list || !item) return;
+
+    list.scrollTo({
+      left: item.offsetLeft - (list.clientWidth - item.clientWidth) / 2,
+      behavior,
+    });
+  };
 
   useEffect(() => {
     const syncProjectFromHash = () => {
       const index = projectIndexFromHash();
       if (index < 0) return;
+      selectedIndexRef.current = index;
       setSelectedIndex(index);
       window.requestAnimationFrame(() => {
         document.querySelector("#projects")?.scrollIntoView({ block: "start" });
@@ -527,10 +555,51 @@ function ProjectGallery() {
     return () => window.removeEventListener("hashchange", syncProjectFromHash);
   }, []);
 
+  useEffect(() => () => {
+    if (scrollFrameRef.current !== null) window.cancelAnimationFrame(scrollFrameRef.current);
+  }, []);
+
   const selectProject = (index: number, moveFocus = false) => {
-    setSelectedIndex(index);
-    window.history.replaceState(null, "", `${projectHashPrefix}${encodeURIComponent(projects[index].id)}`);
-    if (moveFocus) tabRefs.current[index]?.focus();
+    updateProjectSelection(index, moveFocus);
+  };
+
+  const navigateProject = (index: number) => {
+    if (index < 0 || index >= projects.length) return;
+    navigationTargetRef.current = index;
+    updateProjectSelection(index);
+    scrollProjectIntoView(index, reduceMotion ? "auto" : "smooth");
+  };
+
+  const handleGalleryScroll = () => {
+    if (scrollFrameRef.current !== null) return;
+
+    scrollFrameRef.current = window.requestAnimationFrame(() => {
+      scrollFrameRef.current = null;
+      const list = galleryIndexRef.current;
+      if (!list || window.matchMedia("(min-width: 640px)").matches) return;
+
+      const viewportCenter = list.scrollLeft + list.clientWidth / 2;
+      let closestIndex = selectedIndexRef.current;
+      let closestDistance = Number.POSITIVE_INFINITY;
+
+      tabRefs.current.forEach((tab, index) => {
+        const item = tab?.closest<HTMLElement>(".project-selector-shell");
+        if (!item) return;
+        const itemCenter = item.offsetLeft + item.clientWidth / 2;
+        const distance = Math.abs(itemCenter - viewportCenter);
+        if (distance < closestDistance) {
+          closestDistance = distance;
+          closestIndex = index;
+        }
+      });
+
+      if (navigationTargetRef.current !== null) {
+        if (closestIndex === navigationTargetRef.current) navigationTargetRef.current = null;
+        return;
+      }
+
+      updateProjectSelection(closestIndex);
+    });
   };
 
   const handleTabKeyDown = (event: KeyboardEvent<HTMLButtonElement>, index: number) => {
@@ -568,7 +637,40 @@ function ProjectGallery() {
           <span>Choose a project to inspect its architecture, engineering decisions, and evidence.</span>
         </div>
 
-        <div className="project-gallery-index" role="tablist" aria-label="Selected software projects">
+        <div className="mobile-project-controls" aria-label="Mobile project navigation">
+          <span className="mobile-project-progress" aria-live="polite">
+            0{selectedIndex + 1} / 0{projects.length}
+          </span>
+          <div className="mobile-project-buttons">
+            <button
+              type="button"
+              className="mobile-project-control"
+              aria-label="Previous project"
+              disabled={selectedIndex === 0}
+              onClick={() => navigateProject(selectedIndex - 1)}
+            >
+              <PiArrowLeft aria-hidden="true" />
+            </button>
+            <button
+              type="button"
+              className="mobile-project-control"
+              aria-label="Next project"
+              disabled={selectedIndex === projects.length - 1}
+              onClick={() => navigateProject(selectedIndex + 1)}
+            >
+              <PiArrowRight aria-hidden="true" />
+            </button>
+          </div>
+        </div>
+
+        <div
+          ref={galleryIndexRef}
+          className="project-gallery-index"
+          role="tablist"
+          aria-label="Selected software projects"
+          onPointerDown={() => { navigationTargetRef.current = null; }}
+          onScroll={handleGalleryScroll}
+        >
           {projects.map((project, index) => {
             const selected = selectedIndex === index;
             const evidence = project.id === steelworks.id
