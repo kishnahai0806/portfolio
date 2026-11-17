@@ -231,8 +231,7 @@ export const experience = [
     location: "Matteson, IL",
     period: "Aug 2023 to Present",
     bullets: [
-      "Processed and sorted high daily package volumes with high accuracy and safety standards in a fast paced fulfillment environment.",
-      `Balanced work weeks of more than 20 hours with a full time computer science course load while maintaining a ${education.gpa} GPA.`,
+      `Handled high-volume package processing with consistent accuracy and safety while working more than 20 hours per week alongside a full-time computer science course load and maintaining a ${education.gpa} GPA.`,
     ],
   },
   {

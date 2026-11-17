@@ -722,7 +722,7 @@ export default function PortfolioSections() {
         </div>
       </Section>
 
-      <Section id="experience" title="Education and experience.">
+      <Section id="experience" title="Education and additional experience.">
         <div className="experience-layout experience-layout-education-first">
           <aside className="education-card">
             <p className="education-kicker">Education</p>
@@ -738,17 +738,20 @@ export default function PortfolioSections() {
             </div>
           </aside>
 
-          <div className="experience-list">
-            {experience.map((item) => (
-              <article key={`${item.org}-${item.role}`}>
-                <div>
-                  <h3>{item.role}</h3>
-                  <p>{item.org}</p>
-                  {item.bullets.length > 0 && <p className="experience-detail">{item.bullets.join(" ")}</p>}
-                </div>
-                <div className="experience-meta"><p>{item.period}</p><p>{item.location}</p></div>
-              </article>
-            ))}
+          <div className="experience-column">
+            <p className="experience-list-label">Additional experience</p>
+            <div className="experience-list">
+              {experience.map((item) => (
+                <article key={`${item.org}-${item.role}`}>
+                  <div>
+                    <h3>{item.role}</h3>
+                    <p>{item.org}</p>
+                    {item.bullets.length > 0 && <p className="experience-detail">{item.bullets.join(" ")}</p>}
+                  </div>
+                  <div className="experience-meta"><p>{item.period}</p><p>{item.location}</p></div>
+                </article>
+              ))}
+            </div>
           </div>
         </div>
       </Section>

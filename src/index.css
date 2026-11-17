@@ -630,7 +630,7 @@ body { transition: background-color .3s cubic-bezier(.22,1,.36,1), color .3s cub
 .experience-layout { display: grid; gap: 3rem; }
 .experience-list { border-top: 1px solid var(--color-line); }
 .experience-list article { display: grid; gap: 1.25rem; padding: 1.5rem 0; border-bottom: 1px solid var(--color-line); }
-.experience-list h3 { color: var(--color-ink); font-size: 1.125rem; font-weight: 500; line-height: 1.75rem; }
+.experience-list h3 { color: var(--color-ink); font-size: 1rem; font-weight: 500; line-height: 1.5rem; }
 .experience-list article > div > p { margin-top: .25rem; color: var(--color-mut); font-size: .875rem; line-height: 1.5rem; }
 .experience-list .experience-detail { max-width: 42rem; margin-top: 1rem; color: var(--color-dim); }
 .experience-meta { color: var(--color-dim); font-family: var(--font-mono); font-size: .75rem; line-height: 1rem; }
@@ -1328,7 +1328,8 @@ html[data-theme="light"] .cinematic-hero {
 #experience .section-heading { margin-bottom: 3rem; }
 .experience-layout-education-first { align-items: start; }
 .experience-layout-education-first .education-card { order: 1; }
-.experience-layout-education-first .experience-list { order: 2; }
+.experience-layout-education-first .experience-column { order: 2; }
+.experience-list-label { margin-bottom: 1rem; color: var(--color-art); font-size: .875rem; font-weight: 600; }
 .education-card { position: relative; overflow: hidden; border-color: color-mix(in srgb,var(--color-cinematic-highlight) 22%,var(--color-line)); background: color-mix(in srgb,var(--color-panel) 94%,var(--color-cinematic-highlight) 6%); box-shadow: var(--shadow-low); }
 .education-card::before { content: ""; position: absolute; top: 0; right: 2rem; left: 2rem; height: .125rem; background: var(--color-cinematic-highlight); opacity: .7; }
 .education-card > h3 { margin-top: 2rem; }
