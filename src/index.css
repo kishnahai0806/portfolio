@@ -1673,6 +1673,111 @@ html[data-theme="light"] .cinematic-hero {
 .event-project-details { grid-template-columns: 1fr; align-content: start; }
 .event-project-details .project-decisions { margin-top: 0; }
 .event-project-details .project-footer { margin-top: 1.5rem; }
+.ai-lifecycle-evidence {
+  min-width: 0;
+  margin: 0;
+  padding: 2rem 0;
+  border-top: 1px solid color-mix(in srgb,var(--color-art) 42%,var(--color-line));
+  border-bottom: 1px solid var(--color-line);
+}
+.ai-lifecycle-heading {
+  display: grid;
+  grid-template-columns: 10rem minmax(0,1fr);
+  gap: 2rem;
+  align-items: start;
+}
+.ai-lifecycle-heading > span {
+  color: var(--color-art);
+  font-family: var(--font-mono);
+  font-size: .75rem;
+  line-height: 1rem;
+}
+.ai-lifecycle-heading > div { display: grid; gap: .5rem; }
+.ai-lifecycle-heading strong {
+  color: var(--color-ink);
+  font-size: 1.125rem;
+  font-weight: 600;
+  line-height: 1.75rem;
+  text-wrap: balance;
+}
+.ai-lifecycle-heading p,
+.ai-lifecycle-footnote p {
+  color: var(--color-mut);
+  font-size: .875rem;
+  line-height: 1.25rem;
+  text-wrap: pretty;
+}
+.ai-lifecycle-trace {
+  display: grid;
+  grid-template-columns: repeat(5,minmax(0,1fr));
+  overflow: hidden;
+  margin-top: 1.5rem;
+  border: 1px solid var(--color-line);
+  border-radius: .5rem;
+  background: color-mix(in srgb,var(--color-panel) 52%,var(--color-bg));
+  list-style: none;
+}
+.ai-lifecycle-stage {
+  display: grid;
+  min-width: 0;
+  grid-template-columns: auto minmax(0,1fr);
+  gap: .75rem;
+  padding: 1.25rem 1rem;
+  border-right: 1px solid var(--color-line);
+}
+.ai-lifecycle-stage:last-child { border-right: 0; }
+.ai-lifecycle-stage-3 { background: color-mix(in srgb,var(--color-art) 7%,transparent); }
+.ai-lifecycle-index {
+  color: var(--color-art);
+  font-family: var(--font-mono);
+  font-size: .6875rem;
+  line-height: 1rem;
+  font-variant-numeric: tabular-nums;
+}
+.ai-lifecycle-stage > div {
+  display: grid;
+  min-width: 0;
+  align-content: start;
+  gap: .375rem;
+}
+.ai-lifecycle-stage > div > span {
+  color: var(--color-mut);
+  font-size: .75rem;
+  line-height: 1rem;
+}
+.ai-lifecycle-stage strong {
+  overflow-wrap: anywhere;
+  color: var(--color-ink);
+  font-size: .875rem;
+  font-weight: 600;
+  line-height: 1.25rem;
+}
+.ai-lifecycle-stage code {
+  overflow-wrap: anywhere;
+  color: var(--color-dim);
+  font-family: var(--font-mono);
+  font-size: .625rem;
+  line-height: 1rem;
+}
+.ai-lifecycle-footnote {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+.ai-lifecycle-footnote a {
+  flex: 0 0 auto;
+  width: fit-content;
+  border-bottom: 1px solid color-mix(in srgb,var(--color-art) 58%,var(--color-line));
+  color: var(--color-ink);
+  font-size: .75rem;
+  font-weight: 600;
+  line-height: 1rem;
+  transition: border-color .3s cubic-bezier(.22,1,.36,1),color .3s cubic-bezier(.22,1,.36,1);
+}
+.ai-lifecycle-footnote a:hover { border-color: var(--color-art); color: var(--color-art); }
+.ai-lifecycle-footnote a:focus-visible { outline: 2px solid var(--color-art); outline-offset: 4px; }
 .kafka-disclosure { align-self: start; }
 .kafka-disclosure-summary > div > span { font-family: var(--font-sans); font-weight: 600; }
 .kafka-disclosure-button { background: transparent; }
@@ -1816,11 +1921,13 @@ html[data-theme="light"] .cinematic-hero {
     grid-template-columns: minmax(0,.72fr) minmax(34rem,1.28fr);
     grid-template-areas:
       "copy disclosure"
-      "copy details";
+      "evidence evidence"
+      "details details";
     align-items: start;
   }
   .event-project-copy { grid-area: copy; }
   .kafka-disclosure { grid-area: disclosure; }
+  .ai-lifecycle-evidence { grid-area: evidence; }
   .event-project-details {
     grid-area: details;
     grid-template-columns: 1fr;
@@ -1943,6 +2050,12 @@ html[data-theme="light"] .cinematic-hero {
   .event-project { gap: 2.5rem; padding-block: 3.5rem; }
   .event-project h3,
   .supporting-project h3 { font-size: 2.25rem; line-height: 2.5rem; }
+  .ai-lifecycle-heading { grid-template-columns: 1fr; gap: .75rem; }
+  .ai-lifecycle-trace { grid-template-columns: 1fr; }
+  .ai-lifecycle-stage { padding: 1rem; border-right: 0; border-bottom: 1px solid var(--color-line); }
+  .ai-lifecycle-stage:last-child { border-bottom: 0; }
+  .ai-lifecycle-stage > div { grid-template-columns: 1fr; gap: .25rem; }
+  .ai-lifecycle-footnote { align-items: flex-start; flex-direction: column; }
   .supporting-project {
     grid-template-columns: 1fr;
     grid-template-areas:
