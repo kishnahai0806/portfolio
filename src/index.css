@@ -1319,8 +1319,8 @@ html[data-theme="light"] .cinematic-hero {
 .core-skills { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: .5rem; padding-block: 1.5rem; }
 .core-skill-item { display: grid; grid-template-columns: 1.5rem 1rem minmax(0,1fr); min-height: 3rem; align-items: center; gap: .5rem; border-radius: .5rem; padding: .5rem .75rem; background: color-mix(in srgb,var(--color-bg) 44%,transparent); }
 .core-skill-item > span { color: var(--color-art); font-family: var(--font-mono); font-size: .625rem; }
-.core-skill-item svg { color: var(--color-mut); }
-.core-skill-item strong { overflow: hidden; color: var(--color-ink); font-size: .875rem; font-weight: 600; text-overflow: ellipsis; white-space: nowrap; }
+.core-skill-item svg { color: var(--color-mut); transition: color .2s ease, transform .2s ease; }
+.core-skill-item strong { overflow: hidden; color: var(--color-mut); font-size: .875rem; font-weight: 600; text-overflow: ellipsis; white-space: nowrap; transition: color .2s ease; }
 .skills-list-supporting { margin-top: .5rem; }
 .skills-list-supporting .skill-row { padding-block: 1rem; }
 
@@ -1828,6 +1828,8 @@ html[data-theme="light"] .cinematic-hero {
 }
 
 @media (hover: hover) and (pointer: fine) {
+  .core-skill-item:hover strong { color: var(--color-ink); }
+  .core-skill-item:hover svg { color: var(--color-amber); transform: translateY(-1px); }
   .project-selector:hover {
     border-color: color-mix(in srgb,var(--color-art) 46%,var(--color-line));
     box-shadow: var(--shadow-low);
