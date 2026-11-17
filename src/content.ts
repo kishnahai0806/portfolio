@@ -66,7 +66,7 @@ export const projects: Project[] = [
     name: "Issue Tracker",
     oneLiner: "Jira style project management for multiple organizations on Kubernetes.",
     description:
-      "An issue tracker with role based access control, WebSocket/STOMP updates, transactional email, file attachments through presigned URLs, and nightly Spring Batch analytics. Kubernetes scaled it from 2 to 8 replicas during load tests.",
+      "An issue tracker with role based access control, WebSocket/STOMP updates, transactional email, file attachments through presigned URLs, and nightly Spring Batch analytics. Configured Kubernetes autoscaling from 2 to 8 replicas; demonstrated scaling from 2 to 5 locally under load.",
     tags: [
       "Java 21",
       "Spring Boot",
@@ -82,7 +82,7 @@ export const projects: Project[] = [
     metrics: [
       { label: "tests", value: "129" },
       { label: "coverage", value: "80%+" },
-      { label: "hpa_replicas", value: "2 to 8" },
+      { label: "load_test_replicas", value: "2 to 5" },
     ],
     decisions: [
       "Kept each organization's data separate across database queries, live updates, and cached data, with integration tests to catch leaks.",
