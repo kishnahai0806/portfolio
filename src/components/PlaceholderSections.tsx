@@ -291,6 +291,81 @@ function KafkaLinework() {
   );
 }
 
+const capturedAiLifecycle = [
+  {
+    label: "Ticket submitted",
+    value: "201 Created",
+    detail: "AI_PROCESSING",
+  },
+  {
+    label: "Kafka outbound",
+    value: "ticket.created",
+    detail: "HIGH priority",
+  },
+  {
+    label: "AI classification",
+    value: "ACCOUNT · 0.95",
+    detail: "GPT-4o mini · 3,516 ms",
+  },
+  {
+    label: "Kafka return",
+    value: "ticket.processed",
+    detail: "success · 220 tokens",
+  },
+  {
+    label: "Saved ticket",
+    value: "IN_PROGRESS",
+    detail: "category updated",
+  },
+];
+
+function CapturedAiLifecycle() {
+  const { reduceMotion } = useMotionPreferences();
+
+  return (
+    <figure className="ai-lifecycle-evidence" aria-labelledby="ai-lifecycle-title">
+      <figcaption className="ai-lifecycle-heading">
+        <span>Captured lifecycle</span>
+        <div>
+          <strong id="ai-lifecycle-title">One ticket. Two Kafka topics. One saved result.</strong>
+          <p>A synthetic local run captured from the real services on November 17, 2026.</p>
+        </div>
+      </figcaption>
+
+      <ol className="ai-lifecycle-trace">
+        {capturedAiLifecycle.map((stage, index) => (
+          <motion.li
+            key={stage.label}
+            className={`ai-lifecycle-stage ai-lifecycle-stage-${index + 1}`}
+            initial={reduceMotion ? false : { opacity: 0, y: 12 }}
+            whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.6 }}
+            transition={{ duration: 0.5, delay: reduceMotion ? 0 : index * 0.07, ease: premiumEase }}
+          >
+            <span className="ai-lifecycle-index">0{index + 1}</span>
+            <div>
+              <span>{stage.label}</span>
+              <strong>{stage.value}</strong>
+              <code>{stage.detail}</code>
+            </div>
+          </motion.li>
+        ))}
+      </ol>
+
+      <div className="ai-lifecycle-footnote">
+        <p>Demo identity and event UUIDs omitted. Classification values are unchanged.</p>
+        <a
+          href="/project-evidence/ai-support-grafana-dashboard.png"
+          target="_blank"
+          rel="noreferrer"
+        >
+          Open runtime dashboard
+        </a>
+      </div>
+    </figure>
+  );
+}
+
 function EventDrivenProject() {
   const [flowOpen, setFlowOpen] = useState(false);
   const { reduceMotion } = useMotionPreferences();
@@ -347,6 +422,8 @@ function EventDrivenProject() {
             )}
           </AnimatePresence>
         </div>
+
+        <CapturedAiLifecycle />
 
         <div className="event-project-details">
           <ul className="project-decisions">
