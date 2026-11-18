@@ -218,8 +218,8 @@ function FeaturedProject() {
 }
 
 function KafkaLinework() {
-  const { reduceMotion, allowScrollMotion } = useMotionPreferences();
-  const scrollMotion = !reduceMotion && allowScrollMotion;
+  const { reduceMotion } = useMotionPreferences();
+  const signalMotion = !reduceMotion;
 
   return (
     <div
@@ -252,16 +252,15 @@ function KafkaLinework() {
           <path className="kafka-flow-route kafka-flow-route-inbound" d="M648 124 H72" />
           <circle className="kafka-flow-junction" cx="360" cy="56" r="4" />
           <circle className="kafka-flow-junction" cx="360" cy="124" r="4" />
-          {scrollMotion && (
+          {signalMotion && (
             <>
               <motion.circle
                 className="kafka-flow-signal kafka-flow-signal-outbound"
                 cx="72"
                 cy="56"
                 r="5"
-                initial={{ opacity: 0, x: 0 }}
-                whileInView={{ opacity: [0, 1, 1, 0], x: [0, 0, 576, 576] }}
-                viewport={{ once: true, amount: 0.5 }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: [0, 1, 1, 0], cx: [72, 72, 648, 648] }}
                 transition={{ duration: 1.8, delay: 0.2, times: [0, 0.1, 0.9, 1], ease: premiumEase }}
               />
               <motion.circle
@@ -269,9 +268,8 @@ function KafkaLinework() {
                 cx="648"
                 cy="124"
                 r="5"
-                initial={{ opacity: 0, x: 0 }}
-                whileInView={{ opacity: [0, 1, 1, 0], x: [0, 0, -576, -576] }}
-                viewport={{ once: true, amount: 0.5 }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: [0, 1, 1, 0], cx: [648, 648, 72, 72] }}
                 transition={{ duration: 1.8, delay: 2.05, times: [0, 0.1, 0.9, 1], ease: premiumEase }}
               />
             </>
@@ -328,7 +326,7 @@ function CapturedAiLifecycle() {
         <span>Captured lifecycle</span>
         <div>
           <strong id="ai-lifecycle-title">One ticket. Two Kafka topics. One saved result.</strong>
-          <p>A synthetic local run captured from the real services on November 17, 2026.</p>
+          <p>A synthetic local run captured from the real services.</p>
         </div>
       </figcaption>
 
@@ -336,7 +334,7 @@ function CapturedAiLifecycle() {
         {capturedAiLifecycle.map((stage, index) => (
           <motion.li
             key={stage.label}
-            className={`ai-lifecycle-stage ai-lifecycle-stage-${index + 1}`}
+            className="ai-lifecycle-stage"
             initial={reduceMotion ? false : { opacity: 0, y: 12 }}
             whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.6 }}

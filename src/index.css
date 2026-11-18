@@ -1317,7 +1317,7 @@ html[data-theme="light"] .cinematic-hero {
 .core-stack-heading h3 { max-width: 36rem; margin-top: .75rem; color: var(--color-ink); font-size: 2.25rem; font-weight: 600; line-height: 2.5rem; letter-spacing: -.045em; text-wrap: balance; }
 .core-stack-heading p { max-width: 28rem; color: var(--color-dim); font-size: .875rem; line-height: 1.5rem; }
 .core-skills { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: .5rem; padding-block: 1.5rem; }
-.core-skill-item { display: grid; grid-template-columns: 1.5rem 1rem minmax(0,1fr); min-height: 3rem; align-items: center; gap: .5rem; border-radius: .5rem; padding: .5rem .75rem; background: color-mix(in srgb,var(--color-bg) 44%,transparent); }
+.core-skill-item { display: grid; grid-template-columns: 1.5rem 1rem minmax(0,1fr); min-height: 3rem; align-items: center; gap: .5rem; border-radius: .5rem; padding: .5rem .75rem; background: color-mix(in srgb,var(--color-bg) 44%,transparent); -webkit-tap-highlight-color: transparent; transition: transform .5s cubic-bezier(.22,1,.36,1),background-color .3s cubic-bezier(.22,1,.36,1),box-shadow .3s cubic-bezier(.22,1,.36,1); }
 .core-skill-item > span { color: var(--color-art); font-family: var(--font-mono); font-size: .625rem; }
 .core-skill-item svg { color: var(--color-mut); transition: color .2s ease, transform .2s ease; }
 .core-skill-item strong { overflow: hidden; color: var(--color-mut); font-size: .875rem; font-weight: 600; text-overflow: ellipsis; white-space: nowrap; transition: color .2s ease; }
@@ -1726,7 +1726,6 @@ html[data-theme="light"] .cinematic-hero {
   border-right: 1px solid var(--color-line);
 }
 .ai-lifecycle-stage:last-child { border-right: 0; }
-.ai-lifecycle-stage-3 { background: color-mix(in srgb,var(--color-art) 7%,transparent); }
 .ai-lifecycle-index {
   color: var(--color-art);
   font-family: var(--font-mono);
@@ -1947,6 +1946,19 @@ html[data-theme="light"] .cinematic-hero {
   .project-selector:hover::before { opacity: .56; transform: scaleX(.72); }
   .project-selector-selected:hover::before { opacity: 1; transform: scaleX(1); }
   .project-selector:hover .project-selector-evidence > strong { transform: translateY(-.2rem); }
+}
+
+@media (hover: none) and (pointer: coarse) {
+  .core-skill-item:hover,
+  .core-skill-item:active {
+    transform: translateX(.5rem);
+    background: color-mix(in srgb,var(--color-art) 8%,transparent);
+    box-shadow: inset .125rem 0 0 var(--color-art),0 0 1.5rem color-mix(in srgb,var(--color-art) 12%,transparent);
+  }
+  .core-skill-item:hover strong,
+  .core-skill-item:active strong { color: var(--color-ink); }
+  .core-skill-item:hover svg,
+  .core-skill-item:active svg { color: var(--color-amber); transform: translateX(.125rem) scale(1.05); }
 }
 
 @media (max-width: 1023px) {
