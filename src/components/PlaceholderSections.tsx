@@ -496,36 +496,28 @@ function SchoolemSignal() {
   );
 }
 
-function SteelWorksQuality() {
-  const { reduceMotion, allowScrollMotion } = useMotionPreferences();
-  const scrollMotion = !reduceMotion && allowScrollMotion;
-
+function SteelWorksDashboardEvidence() {
   return (
-    <div
-      className="supporting-visual steelworks-quality"
-      role="img"
-      aria-label="SteelWorks quality path from the Python dashboard through pytest and Playwright testing, Sentry monitoring, and Docker deployment consistency."
-    >
-      <div className="steelworks-quality-heading" aria-hidden="true">
-        <span>Quality path</span>
-        <span>Capstone</span>
-      </div>
-      <div className="steelworks-quality-track" aria-hidden="true">
-        {["Python dashboard", "pytest", "Playwright", "Sentry", "Docker"].map((label, index) => (
-          <motion.div
-            key={label}
-            className="steelworks-quality-step"
-            initial={scrollMotion ? { opacity: 0, x: -8 } : false}
-            whileInView={scrollMotion ? { opacity: 1, x: 0 } : undefined}
-            viewport={{ once: true, amount: 0.65 }}
-            transition={{ duration: 0.45, delay: scrollMotion ? index * 0.07 : 0, ease: premiumEase }}
-          >
-            <i />
-            <span>{label}</span>
-          </motion.div>
-        ))}
-      </div>
-    </div>
+    <figure className="supporting-visual steelworks-dashboard-evidence">
+      <a
+        href="/project-evidence/steelworks-dashboard.png"
+        target="_blank"
+        rel="noreferrer"
+        aria-label="Open full-size SteelWorks dashboard screenshot"
+      >
+        <img
+          src="/project-evidence/steelworks-dashboard.png"
+          alt="Week 2026-W03 issue summary. Line 1 recorded one material shortage and two tool wear issues. Line 4 recorded two sensor faults."
+          width={1684}
+          height={1558}
+          loading="lazy"
+          decoding="async"
+        />
+      </a>
+      <figcaption>
+        <p>Five issues affected three lots. Tool wear and sensor faults each occurred twice.</p>
+      </figcaption>
+    </figure>
   );
 }
 
@@ -540,6 +532,11 @@ function SupportingProject({ project, variant }: { project: Project; variant: "s
         <p className="project-one-liner">{project.oneLiner}</p>
         {project.role && <p className="project-role">{project.role}</p>}
         <p className="project-description">{descriptionSummary}</p>
+        {variant === "steelworks" && (
+          <ProjectDetailDisclosure id="steelworks-dashboard" label="View dashboard" hideLabel="Hide dashboard">
+            <SteelWorksDashboardEvidence />
+          </ProjectDetailDisclosure>
+        )}
       </div>
       <div className="supporting-project-evidence">
         <ProjectMetrics project={project} compact />
@@ -547,9 +544,9 @@ function SupportingProject({ project, variant }: { project: Project; variant: "s
           {project.decisions.slice(0, 1).map((decision) => <ProjectDecision key={decision}>{decision}</ProjectDecision>)}
         </ul>
       </div>
-      <div className="supporting-project-artifact">
-        {variant === "schoolem" ? <SchoolemSignal /> : <SteelWorksQuality />}
-      </div>
+      {variant === "schoolem" && (
+        <div className="supporting-project-artifact"><SchoolemSignal /></div>
+      )}
       <div className="supporting-project-meta">
         <ProjectDetailDisclosure id={`${project.id}-engineering-details`} label="View engineering notes">
           {descriptionDetails.length > 0 && <p className="project-detail-copy">{descriptionDetails.join(" ")}</p>}
