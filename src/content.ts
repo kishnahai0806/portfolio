@@ -11,7 +11,7 @@ export const site = {
   email: "kprajapati0806@gmail.com",
   github: "https://github.com/kishnahai0806",
   linkedin: "https://www.linkedin.com/in/krish-prajapati-swe",
-  resumeUrl: "/resume.pdf", // place the final PDF at public/resume.pdf
+  resumeUrl: "/Krish_Prajapati_Resume.pdf",
   resumeFilename: "Krish_Prajapati_Resume.pdf",
 };
 
