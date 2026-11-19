@@ -48,6 +48,8 @@ function ProjectDecision({ children }: { children: ReactNode }) {
 }
 
 function ProjectMetrics({ project, compact = false }: { project: Project; compact?: boolean }) {
+  if (project.metrics.length === 0) return null;
+
   return (
     <div className={`project-metrics ${compact ? "project-metrics-compact" : ""}`}>
       {project.metrics.slice(0, 3).map((metric) => (
@@ -187,19 +189,19 @@ function ArchitectureLayers() {
 }
 
 function FeaturedProject() {
+  const [isolationDecision, ...implementationDecisions] = issueTracker.decisions;
+
   return (
     <article className="featured-project">
       <div className="featured-project-copy">
         <h3>{issueTracker.name}</h3>
         <p className="project-one-liner">{issueTracker.oneLiner}</p>
-        <p className="project-description">{issueTracker.description}</p>
+        <p className="project-description">{isolationDecision}</p>
         <ProjectMetrics project={issueTracker} />
-        <ul className="project-decisions project-decisions-primary">
-          {issueTracker.decisions.slice(0, 2).map((decision) => <ProjectDecision key={decision}>{decision}</ProjectDecision>)}
-        </ul>
         <ProjectDetailDisclosure id="issue-tracker-engineering-details" label="Explore implementation details">
+          <p className="project-detail-copy">{issueTracker.description}</p>
           <ul className="project-decisions project-decisions-secondary">
-            {issueTracker.decisions.slice(2).map((decision) => <ProjectDecision key={decision}>{decision}</ProjectDecision>)}
+            {implementationDecisions.map((decision) => <ProjectDecision key={decision}>{decision}</ProjectDecision>)}
           </ul>
           <div className="project-detail-tags" aria-label="Additional Issue Tracker technologies">
             {issueTracker.tags.slice(6).map((tag) => <span key={tag} className="tech-tag">{tag}</span>)}
@@ -365,6 +367,7 @@ function CapturedAiLifecycle() {
 }
 
 function EventDrivenProject() {
+  const [failureIsolation, monitoring, testCoverage] = aiSupport.decisions;
   const [flowOpen, setFlowOpen] = useState(false);
   const { reduceMotion } = useMotionPreferences();
 
@@ -414,7 +417,8 @@ function EventDrivenProject() {
               >
                 <KafkaLinework />
                 <ul className="project-decisions kafka-detail-decisions">
-                  {aiSupport.decisions.slice(2).map((decision) => <ProjectDecision key={decision}>{decision}</ProjectDecision>)}
+                  <ProjectDecision>{failureIsolation}</ProjectDecision>
+                  <ProjectDecision>{testCoverage}</ProjectDecision>
                 </ul>
               </motion.div>
             )}
@@ -425,7 +429,7 @@ function EventDrivenProject() {
 
         <div className="event-project-details">
           <ul className="project-decisions">
-            {aiSupport.decisions.slice(0, 2).map((decision) => <ProjectDecision key={decision}>{decision}</ProjectDecision>)}
+            <ProjectDecision>{monitoring}</ProjectDecision>
           </ul>
           <div className="project-footer">
             <ProjectTags project={aiSupport} />

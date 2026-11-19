@@ -1827,6 +1827,7 @@ html[data-theme="light"] .cinematic-hero {
 .supporting-project .project-metrics { grid-template-columns: repeat(2,minmax(0,1fr)); }
 .supporting-project .project-metrics > div:last-child:nth-child(odd) { grid-column: 1 / -1; }
 .supporting-project .project-decisions { margin-top: 1.5rem; }
+.supporting-project-evidence > .project-decisions:first-child { margin-top: 0; }
 .supporting-project .project-disclosure,
 .supporting-project .project-footer { margin-top: 0; }
 .supporting-project .project-footer { justify-self: end; align-items: flex-end; }

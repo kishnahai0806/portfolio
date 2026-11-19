@@ -96,7 +96,7 @@ export const projects: Project[] = [
     name: "AI Support Platform",
     oneLiner: "Kafka connects two services that classify and route support tickets.",
     description:
-      "Customers submit tickets to one Spring Boot service. Kafka carries each ticket to a second service for OpenAI classification, then carries the result back so the saved ticket can be updated.",
+      "Customers can submit tickets without waiting for the AI classification result.",
     tags: ["Spring Boot", "Kafka", "OpenAI API", "PostgreSQL", "Redis", "Railway", "Docker"],
     metrics: [
       { label: "tests", value: "74" },
@@ -104,7 +104,7 @@ export const projects: Project[] = [
       { label: "services", value: "2" },
     ],
     decisions: [
-      "Kafka keeps slow or failed model calls out of the request path. Ticket creation returns before classification finishes, and the result comes back through Kafka.",
+      "A failed model call stays out of the ticket submission path. The classification service returns its result through Kafka.",
       "Added Micrometer metrics for ticket throughput, processing time, and model confidence, then graphed them in Grafana.",
       "CI runs 74 automated tests and fails if coverage drops below 80%.",
     ],
@@ -117,12 +117,11 @@ export const projects: Project[] = [
     name: "Schoolem",
     oneLiner: "Live social platform for verified college students (team of 4).",
     description:
-      "A college social platform with university feeds, posts, follows, notifications, and direct messages. In a team of four, I owned the messaging service: a stateless Spring Boot resource server that validates Supabase JWTs.",
+      "A college social platform with university feeds, posts, follows, notifications, and direct messages. The messaging service runs as a stateless Spring Boot resource server that validates Supabase JWTs.",
     role: "Software Developer, messaging service owner",
     tags: ["React", "TypeScript", "Supabase", "Spring Boot", "Java 21", "Postgres RLS"],
     metrics: [
       { label: "tests", value: "93" },
-      { label: "team", value: "4" },
     ],
     decisions: [
       "Built the messaging service with follow checks, per user limits, pagination, read receipts, and safe deletion.",
@@ -136,9 +135,9 @@ export const projects: Project[] = [
     name: "SteelWorks",
     oneLiner: "Manufacturing metrics dashboard for my senior capstone.",
     description:
-      "A Python dashboard for manufacturing floor metrics. Pytest covers the business logic, Playwright covers browser flows, Sentry reports runtime errors, and Docker keeps local and deployed environments consistent.",
+      "Filter weekly production issues by line and export the results as CSV. Pytest covers the business logic, Playwright covers browser flows, Sentry reports runtime errors, and Docker keeps local and deployed environments consistent.",
     tags: ["Python", "pytest", "Playwright", "Sentry", "Docker"],
-    metrics: [{ label: "stage", value: "capstone" }],
+    metrics: [],
     decisions: [
       "Wrote Playwright tests against the running UI for the workflows most likely to break.",
       "Added Sentry early so runtime failures include the request and browser context needed to debug them.",
